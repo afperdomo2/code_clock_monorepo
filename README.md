@@ -10,7 +10,7 @@ CodeClockMono es un monorepo escalable que proporciona:
 
 - **Backend API**: Servidor NestJS con arquitectura modular
 - **Frontend Client**: Aplicación Vue 3 con Vite y TypeScript
-- **Tests E2E**: Pruebas de extremo a extremo con Playwright (client) y Jest (API)
+- **Tests Unitarios**: Pruebas con Jest
 - **Configuración compartida**: Linting, TypeScript y ESLint centralizados
 
 ### Estructura del Proyecto
@@ -18,9 +18,7 @@ CodeClockMono es un monorepo escalable que proporciona:
 ```
 apps/
 ├── api/              # Backend con NestJS (puerto 3000)
-├── api-e2e/          # Tests E2E para la API
-├── client/           # Frontend con Vue 3 + Vite
-└── client-e2e/       # Tests E2E para el cliente
+└── client/           # Frontend con Vue 3 + Vite
 ```
 
 ## 🛠️ Tecnologías Principales
@@ -29,7 +27,7 @@ apps/
 - **Frontend**: [Vue 3](https://vuejs.org) con [Vite](https://vitejs.dev)
 - **Lenguaje**: [TypeScript](https://www.typescriptlang.org)
 - **Monorepo**: [Nx](https://nx.dev)
-- **Testing**: [Jest](https://jestjs.io) (API), [Playwright](https://playwright.dev) (E2E)
+- **Testing**: [Jest](https://jestjs.io)
 - **Linting**: [ESLint](https://eslint.org) + [Prettier](https://prettier.io)
 
 ## 🚀 Guía de Inicio Rápido
@@ -78,10 +76,6 @@ npx nx build client
 # Ejecutar tests unitarios
 npx nx test api
 npx nx test client
-
-# Ejecutar tests E2E
-npx nx e2e api-e2e
-npx nx e2e client-e2e
 
 # Linting y formateo
 npx nx lint api
@@ -150,20 +144,7 @@ npx nx test api -- --coverage
 
 ### Tests E2E
 
-```sh
-# Ejecutar tests E2E del cliente
-npx nx e2e client-e2e
-
-# Ejecutar tests E2E de la API
-npx nx e2e api-e2e
-
-# Ejecutar en modo interactivo
-npx nx e2e client-e2e --headed
-```
-
-## 🎯 Mejores Prácticas
-
-### Organización del Código
+``` Organización del Código
 
 - Cada aplicación tiene su propio `project.json` con configuración específica
 - Las configuraciones compartidas están en `tsconfig.base.json` y `nx.json`
