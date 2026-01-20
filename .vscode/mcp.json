@@ -3,6 +3,10 @@
     "nx-mcp": {
       "command": "npx",
       "args": ["nx-mcp@latest"]
+    },
+    "Prisma-Local": {
+      "command": "npx",
+      "args": ["-y", "prisma", "mcp"]
     }
   }
 }

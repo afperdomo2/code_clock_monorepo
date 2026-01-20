@@ -19,12 +19,17 @@ CodeClockMono es un monorepo escalable que proporciona:
 apps/
 ├── api/              # Backend con NestJS (puerto 3000)
 └── client/           # Frontend con Vue 3 + Vite
+libs/
+└── prisma-client/    # Librería compartida para acceso a DB
 ```
 
 ## 🛠️ Tecnologías Principales
 
 - **Framework**: [NestJS](https://nestjs.com) (Backend)
 - **Frontend**: [Vue 3](https://vuejs.org) con [Vite](https://vitejs.dev)
+- **Base de Datos**: [PostgreSQL](https://www.postgresql.org)
+- **ORM**: [Prisma](https://www.prisma.io)
+- **Docs API**: [Swagger](https://swagger.io)
 - **Lenguaje**: [TypeScript](https://www.typescriptlang.org)
 - **Monorepo**: [Nx](https://nx.dev)
 - **Testing**: [Jest](https://jestjs.io)
@@ -36,18 +41,26 @@ apps/
 
 - Node.js 18+
 - npm o pnpm
+- PostgreSQL (Puerto 5433)
 
-### Instalación
+### Instalación y Configuración
 
 ```sh
 # Instalar dependencias
 npm install
+
+# Configurar variables de entorno
+# Crear archivo .env en la raíz basado en el ejemplo proporcionado
+
+# Ejecutar migraciones de base de datos
+npx prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
 ```
 
 ### Ejecutar la Aplicación
 
 ```sh
-# Ejecutar el API
+# Ejecutar el API.
+La documentación Swagger está disponible en `http://localhost:3000/api/docs`.
 npx nx serve api
 
 # Ejecutar el cliente
@@ -144,7 +157,7 @@ npx nx test api -- --coverage
 
 ### Tests E2E
 
-``` Organización del Código
+```Organización del Código
 
 - Cada aplicación tiene su propio `project.json` con configuración específica
 - Las configuraciones compartidas están en `tsconfig.base.json` y `nx.json`
@@ -165,6 +178,8 @@ Este proyecto está bajo la licencia MIT.
 - [Documentación de Nx](https://nx.dev/docs)
 - [Documentación de NestJS](https://docs.nestjs.com)
 - [Documentación de Vue 3](https://vuejs.org)
+- [Prisma ORM](https://www.prisma.io/docs)
+
 - [Vite - Frontend Tooling](https://vitejs.dev)
 
 ## 🤝 Contribuir
@@ -180,3 +195,4 @@ Para contribuir al proyecto:
 ## ❓ Soporte
 
 Para reportar issues o solicitar features, por favor abre un issue en el repositorio.
+```
