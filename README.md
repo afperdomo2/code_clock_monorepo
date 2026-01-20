@@ -2,95 +2,200 @@
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+Un monorepo moderno construido con [Nx](https://nx.dev) que integra un backend robusto con [NestJS](https://nestjs.com) y un frontend dinámico con [Vue 3](https://vuejs.org).
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## 📋 Descripción del Proyecto
 
-## Run tasks
+CodeClockMono es un monorepo escalable que proporciona:
 
-To run tasks with Nx use:
+- **Backend API**: Servidor NestJS con arquitectura modular
+- **Frontend Client**: Aplicación Vue 3 con Vite y TypeScript
+- **Tests E2E**: Pruebas de extremo a extremo con Playwright (client) y Jest (API)
+- **Configuración compartida**: Linting, TypeScript y ESLint centralizados
+
+### Estructura del Proyecto
+
+```
+apps/
+├── api/              # Backend con NestJS (puerto 3000)
+├── api-e2e/          # Tests E2E para la API
+├── client/           # Frontend con Vue 3 + Vite
+└── client-e2e/       # Tests E2E para el cliente
+```
+
+## 🛠️ Tecnologías Principales
+
+- **Framework**: [NestJS](https://nestjs.com) (Backend)
+- **Frontend**: [Vue 3](https://vuejs.org) con [Vite](https://vitejs.dev)
+- **Lenguaje**: [TypeScript](https://www.typescriptlang.org)
+- **Monorepo**: [Nx](https://nx.dev)
+- **Testing**: [Jest](https://jestjs.io) (API), [Playwright](https://playwright.dev) (E2E)
+- **Linting**: [ESLint](https://eslint.org) + [Prettier](https://prettier.io)
+
+## 🚀 Guía de Inicio Rápido
+
+### Requisitos Previos
+
+- Node.js 18+
+- npm o pnpm
+
+### Instalación
+
+```sh
+# Instalar dependencias
+npm install
+```
+
+### Ejecutar la Aplicación
+
+```sh
+# Ejecutar el API
+npx nx serve api
+
+# Ejecutar el cliente
+npx nx serve client
+```
+
+El API estará disponible en `http://localhost:3000/api` y el cliente en `http://localhost:5173`
+
+## 📦 Comandos Disponibles
+
+### Ejecución General
+
+Para ejecutar cualquier tarea con Nx:
 
 ```sh
 npx nx <target> <project-name>
 ```
 
-For example:
+### Ejemplos de Tareas
 
 ```sh
-npx nx build myproject
+# Construir un proyecto
+npx nx build api
+npx nx build client
+
+# Ejecutar tests unitarios
+npx nx test api
+npx nx test client
+
+# Ejecutar tests E2E
+npx nx e2e api-e2e
+npx nx e2e client-e2e
+
+# Linting y formateo
+npx nx lint api
+npx nx lint client
+npx nx format
+
+# Ver el grafo de dependencias
+npx nx graph
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## 📊 Explorar el Espacio de Trabajo
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
-```
-
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
-
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
-
-# Generate a library
-npx nx g @nx/react:lib some-lib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
+Para visualizar la estructura del proyecto y las dependencias entre aplicaciones:
 
 ```sh
-npx nx connect
+npx nx graph
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+Este comando abre una interfaz visual interactiva donde puedes explorar:
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Dependencias entre proyectos
+- Tareas disponibles
+- Configuración de cada proyecto
 
-### Step 2
+## ➕ Agregar Nuevos Proyectos
 
-Use the following command to configure a CI workflow for your workspace:
+### Usando Generadores de Nx
 
 ```sh
-npx nx g ci-workflow
+# Agregar una nueva aplicación NestJS
+npx nx g @nx/nest:app apps/my-api
+
+# Agregar una nueva aplicación Vue
+npx nx g @nx/vue:app apps/my-client
+
+# Agregar una librería compartida
+npx nx g @nx/nest:lib libs/shared
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Primero lista los plugins disponibles:
 
-## Install Nx Console
+```sh
+npx nx list
+```
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Luego explora los generadores de un plugin específico:
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```sh
+npx nx list @nx/nest
+```
 
-## Useful links
+## 🧪 Testing
 
-Learn more:
+### Tests Unitarios
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```sh
+# Ejecutar tests de un proyecto
+npx nx test api
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Ejecutar tests en modo watch
+npx nx test api -- --watch
+
+# Ejecutar tests con cobertura
+npx nx test api -- --coverage
+```
+
+### Tests E2E
+
+```sh
+# Ejecutar tests E2E del cliente
+npx nx e2e client-e2e
+
+# Ejecutar tests E2E de la API
+npx nx e2e api-e2e
+
+# Ejecutar en modo interactivo
+npx nx e2e client-e2e --headed
+```
+
+## 🎯 Mejores Prácticas
+
+### Organización del Código
+
+- Cada aplicación tiene su propio `project.json` con configuración específica
+- Las configuraciones compartidas están en `tsconfig.base.json` y `nx.json`
+- Los tests se colocan junto al código fuente con extensión `.spec.ts`
+
+### Convenciones de Nombrado
+
+- Aplicaciones en `apps/`
+- Librerías compartidas en `libs/`
+- Archivos de configuración específicos del proyecto en la raíz del proyecto
+
+## 📝 Licencia
+
+Este proyecto está bajo la licencia MIT.
+
+## 📚 Recursos Adicionales
+
+- [Documentación de Nx](https://nx.dev/docs)
+- [Documentación de NestJS](https://docs.nestjs.com)
+- [Documentación de Vue 3](https://vuejs.org)
+- [Vite - Frontend Tooling](https://vitejs.dev)
+
+## 🤝 Contribuir
+
+Para contribuir al proyecto:
+
+1. Crea una rama para tu feature
+2. Realiza tus cambios
+3. Ejecuta `npx nx format` para asegurar el formato correcto
+4. Ejecuta `npx nx lint` para verificar linting
+5. Crea un pull request
+
+## ❓ Soporte
+
+Para reportar issues o solicitar features, por favor abre un issue en el repositorio.
