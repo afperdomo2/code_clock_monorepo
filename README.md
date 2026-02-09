@@ -20,15 +20,23 @@ apps/
 ├── api/              # Backend con NestJS (puerto 3000)
 └── client/           # Frontend con Vue 3 + Vite
 libs/
-└── prisma-client/    # Librería compartida para acceso a DB
+└── prisma-client/    # Librería compartida para acceso a DB con Prisma
 ```
+
+### Configuración de Base de Datos
+
+El proyecto utiliza Prisma ORM con configuración separada:
+
+- **Schema**: `libs/prisma-client/prisma/schema.prisma`
+- **Config**: `libs/prisma-client/prisma.config.ts`
+- **Variables de entorno**: `.env` (en la raíz del proyecto)
 
 ## 🛠️ Tecnologías Principales
 
 - **Framework**: [NestJS](https://nestjs.com) (Backend)
 - **Frontend**: [Vue 3](https://vuejs.org) con [Vite](https://vitejs.dev)
 - **Base de Datos**: [PostgreSQL](https://www.postgresql.org)
-- **ORM**: [Prisma](https://www.prisma.io)
+- **ORM**: [Prisma](https://www.prisma.io) v7.x (con configuración separada)
 - **Docs API**: [Swagger](https://swagger.io)
 - **Lenguaje**: [TypeScript](https://www.typescriptlang.org)
 - **Monorepo**: [Nx](https://nx.dev)
@@ -41,7 +49,7 @@ libs/
 
 - Node.js 18+
 - npm o pnpm
-- PostgreSQL (Puerto 5433)
+- PostgreSQL (Puerto 5432)
 
 ### Instalación y Configuración
 
@@ -53,7 +61,10 @@ npm install
 # Crear archivo .env en la raíz basado en el ejemplo proporcionado
 
 # Ejecutar migraciones de base de datos
-npx prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
+npx prisma migrate dev --config=libs/prisma-client/prisma.config.ts
+
+# Generar cliente de Prisma (después de cambios en el schema)
+npx prisma generate --config=libs/prisma-client/prisma.config.ts
 ```
 
 ### Ejecutar la Aplicación
@@ -94,6 +105,11 @@ npx nx test client
 npx nx lint api
 npx nx lint client
 npx nx format
+
+# Base de datos (Prisma)
+npx prisma migrate dev --config=libs/prisma-client/prisma.config.ts  # Ejecutar migraciones
+npx prisma generate --config=libs/prisma-client/prisma.config.ts     # Generar cliente
+npx prisma studio --config=libs/prisma-client/prisma.config.ts       # Abrir Prisma Studio
 
 # Ver el grafo de dependencias
 npx nx graph
@@ -182,6 +198,26 @@ Este proyecto está bajo la licencia MIT.
 
 - [Vite - Frontend Tooling](https://vitejs.dev)
 
+## ❓ Solución de Problemas
+
+### Comandos de Prisma
+
+Los comandos de Prisma deben ejecutarse con `--config` para especificar el archivo de configuración:
+
+```sh
+# ✅ Correcto
+npx prisma migrate dev --config=libs/prisma-client/prisma.config.ts
+
+# ❌ Incorrecto (no carga la configuración)
+npx prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
+```
+
+### Base de Datos
+
+- Asegúrate de que PostgreSQL esté ejecutándose en el puerto 5432
+- Verifica que las credenciales en `.env` sean correctas
+- Si hay problemas de conexión, ejecuta: `npx prisma db push --config=libs/prisma-client/prisma.config.ts`
+
 ## 🤝 Contribuir
 
 Para contribuir al proyecto:
@@ -195,4 +231,5 @@ Para contribuir al proyecto:
 ## ❓ Soporte
 
 Para reportar issues o solicitar features, por favor abre un issue en el repositorio.
+
 ```

@@ -45,3 +45,5 @@ vite.config.*.timestamp*
 
 !.vscode/mcp.json
 db_cluster-10-10-2024@00-16-49.backup.gz
+
+.env
