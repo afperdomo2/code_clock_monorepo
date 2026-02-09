@@ -13,7 +13,7 @@ export class CreateUserDto {
     example: 'user@example.com',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'The password of the user',
@@ -22,7 +22,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(6)
   @MaxLength(100)
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'The name of the user',

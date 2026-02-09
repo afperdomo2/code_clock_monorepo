@@ -3,6 +3,7 @@ import { PrismaService } from '@code-clock-mono/prisma-client';
 import { CreateDeliverableDto } from './dto/create-deliverable.dto';
 import { QueryDeliverablesDto } from './dto/query-deliverables.dto';
 import { UpdateDeliverableDto } from './dto/update-deliverable.dto';
+import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 
 @Injectable()
 export class DeliverablesService {
@@ -20,12 +21,27 @@ export class DeliverablesService {
   }
 
   async findAll(query: QueryDeliverablesDto) {
-    return this.prisma.deliverable.findMany({
-      where: {
-        project_id: query.project_id,
-      },
-      orderBy: { deadline: 'asc' },
-    });
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const skip = (page - 1) * limit;
+    const where = {
+      project_id: query.project_id,
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.deliverable.findMany({
+        where,
+        orderBy: { deadline: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.deliverable.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: new PaginationMetaDto(page, limit, total),
+    };
   }
 
   async findOne(id: string) {

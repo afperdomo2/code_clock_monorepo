@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@code-clock-mono/prisma-client';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { QueryTimeEntriesDto } from './dto/query-time-entries.dto';
+import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 
 @Injectable()
 export class TimeEntriesService {
@@ -21,19 +22,34 @@ export class TimeEntriesService {
   }
 
   async findAll(query: QueryTimeEntriesDto) {
-    return this.prisma.timeEntry.findMany({
-      where: {
-        project_id: query.project_id,
-        date:
-          query.from || query.to
-            ? {
-                gte: query.from ? new Date(query.from) : undefined,
-                lte: query.to ? new Date(query.to) : undefined,
-              }
-            : undefined,
-      },
-      orderBy: { date: 'desc' },
-    });
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const skip = (page - 1) * limit;
+    const where = {
+      project_id: query.project_id,
+      date:
+        query.from || query.to
+          ? {
+              gte: query.from ? new Date(query.from) : undefined,
+              lte: query.to ? new Date(query.to) : undefined,
+            }
+          : undefined,
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.timeEntry.findMany({
+        where,
+        orderBy: { date: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.timeEntry.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: new PaginationMetaDto(page, limit, total),
+    };
   }
 
   async findOne(id: string) {

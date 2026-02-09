@@ -110,6 +110,21 @@ pnpm prisma migrate dev --config=libs/prisma-client/prisma.config.ts
 pnpm prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
 ```
 
+## 🧠 Skills (Agentes)
+
+Skills instaladas para asistir el desarrollo:
+
+- NestJS Best Practices
+ 	- Instalacion: `npx skills add https://github.com/kadajett/agent-nestjs-skills --skill nestjs-best-practices`
+ 	- Archivo: [.agents/skills/nestjs-best-practices/SKILL.md](.agents/skills/nestjs-best-practices/SKILL.md)
+
+## 🤖 IA y MCP
+
+Servidores MCP configurados en [.vscode/mcp.json](.vscode/mcp.json):
+
+- nx-mcp (command: `npx`, args: `nx-mcp@latest`)
+- Prisma-Local (command: `npx`, args: `-y prisma mcp`)
+
 ## 📝 Licencia
 
 MIT

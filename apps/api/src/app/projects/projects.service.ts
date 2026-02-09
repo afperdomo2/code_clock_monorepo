@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@code-clock-mono/prisma-client';
+import { Prisma } from '@prisma/client';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectsDto } from './dto/query-projects.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -25,19 +27,34 @@ export class ProjectsService {
   }
 
   async findAll(query: QueryProjectsDto) {
-    return this.prisma.project.findMany({
-      where: {
-        status: query.status,
-        client: query.client,
-        name: query.search
-          ? {
-              contains: query.search,
-              mode: 'insensitive',
-            }
-          : undefined,
-      },
-      orderBy: { created_at: 'desc' },
-    });
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const skip = (page - 1) * limit;
+    const where = {
+      status: query.status,
+      client: query.client,
+      name: query.search
+        ? {
+            contains: query.search,
+            mode: Prisma.QueryMode.insensitive,
+          }
+        : undefined,
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.project.findMany({
+        where,
+        orderBy: { created_at: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.project.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: new PaginationMetaDto(page, limit, total),
+    };
   }
 
   async findOne(id: string) {

@@ -34,14 +34,17 @@ export class DeliverablesController {
 
   @Get()
   @ApiOperation({ summary: 'List deliverables' })
-  @ApiResponse({ status: 200, type: [DeliverableResponseDto] })
+  @ApiResponse({ status: 200 })
   async findAll(@Query() query: QueryDeliverablesDto) {
-    const deliverables = await this.deliverablesService.findAll(query);
-    return deliverables.map((deliverable) =>
-      plainToInstance(DeliverableResponseDto, deliverable, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    const result = await this.deliverablesService.findAll(query);
+    return {
+      data: result.data.map((deliverable) =>
+        plainToInstance(DeliverableResponseDto, deliverable, {
+          excludeExtraneousValues: true,
+        }),
+      ),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

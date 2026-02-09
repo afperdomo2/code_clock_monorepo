@@ -32,14 +32,17 @@ export class TimeEntriesController {
 
   @Get()
   @ApiOperation({ summary: 'List time entries' })
-  @ApiResponse({ status: 200, type: [TimeEntryResponseDto] })
+  @ApiResponse({ status: 200 })
   async findAll(@Query() query: QueryTimeEntriesDto) {
-    const entries = await this.timeEntriesService.findAll(query);
-    return entries.map((entry) =>
-      plainToInstance(TimeEntryResponseDto, entry, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    const result = await this.timeEntriesService.findAll(query);
+    return {
+      data: result.data.map((entry) =>
+        plainToInstance(TimeEntryResponseDto, entry, {
+          excludeExtraneousValues: true,
+        }),
+      ),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

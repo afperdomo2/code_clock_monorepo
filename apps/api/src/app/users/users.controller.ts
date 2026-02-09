@@ -5,11 +5,13 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { QueryUsersDto } from './dto/query-users.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -29,9 +31,9 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Return all users.', type: [User] })
-  findAll() {
-    return this.usersService.findAll();
+  @ApiResponse({ status: 200, description: 'Return all users.' })
+  findAll(@Query() query: QueryUsersDto) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

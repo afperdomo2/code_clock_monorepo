@@ -34,14 +34,17 @@ export class ProjectsController {
 
   @Get()
   @ApiOperation({ summary: 'List projects' })
-  @ApiResponse({ status: 200, type: [ProjectResponseDto] })
+  @ApiResponse({ status: 200 })
   async findAll(@Query() query: QueryProjectsDto) {
-    const projects = await this.projectsService.findAll(query);
-    return projects.map((project) =>
-      plainToInstance(ProjectResponseDto, project, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    const result = await this.projectsService.findAll(query);
+    return {
+      data: result.data.map((project) =>
+        plainToInstance(ProjectResponseDto, project, {
+          excludeExtraneousValues: true,
+        }),
+      ),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

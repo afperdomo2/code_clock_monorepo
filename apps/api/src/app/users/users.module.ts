@@ -7,5 +7,6 @@ import { PrismaModule } from '@code-clock-mono/prisma-client';
   imports: [PrismaModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}
