@@ -12,6 +12,25 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ProjectCategory {
+  EMPRESA  @map("Empresa")
+  PERSONAL @map("Personal")
+  FREELANCE @map("Freelance")
+}
+
+enum ProjectPriority {
+  ALTA  @map("Alta")
+  MEDIA @map("Media")
+  BAJA  @map("Baja")
+}
+
+enum ProjectStatus {
+  ACTIVO     @map("Activo")
+  FINALIZADO @map("Finalizado")
+  PAUSA      @map("Pausa")
+  PENDIENTE  @map("Pendiente")
+}
+
 model User {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email         String    @unique @db.VarChar(255)
@@ -21,4 +40,54 @@ model User {
   updated_at    DateTime? @updatedAt @db.Timestamptz(6)
 
   @@map("users")
+}
+
+model Project {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String           @db.VarChar(255)
+  client          String?          @db.VarChar(255)
+  category        ProjectCategory
+  priority        ProjectPriority
+  status          ProjectStatus
+  hours_spent     Float            @default(0)
+  hours_estimated Float?
+  deadline        DateTime?        @db.Timestamptz(6)
+  description     String?          @db.Text
+  created_at      DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?        @updatedAt @db.Timestamptz(6)
+
+  time_entries    TimeEntry[]
+  deliverables    Deliverable[]
+
+  @@map("projects")
+}
+
+model TimeEntry {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  project_id    String   @db.Uuid
+  activity_type String   @db.VarChar(100)
+  description   String   @db.Text
+  date          DateTime @db.Timestamptz(6)
+  duration      Int
+  end_time      DateTime? @db.Timestamptz(6)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  project       Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id])
+  @@map("time_entries")
+}
+
+model Deliverable {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  project_id String   @db.Uuid
+  title      String   @db.VarChar(255)
+  deadline   DateTime? @db.Timestamptz(6)
+  completed  Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  project    Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id])
+  @@map("deliverables")
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@code-clock-mono/prisma-client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -24,9 +24,15 @@ export class UsersService {
     return this.prisma.user.findMany() as unknown as Promise<User[]>;
   }
 
-  async findOne(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
+  async findOne(id: string): Promise<User> {
+    const user = (await this.prisma.user.findUnique({
       where: { id },
-    }) as unknown as Promise<User | null>;
+    })) as unknown as User | null;
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
   }
 }
