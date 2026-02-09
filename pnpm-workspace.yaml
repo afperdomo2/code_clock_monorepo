@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - libs/*
+
+ignoredBuiltDependencies:
+  - '@nestjs/core'
+  - '@parcel/watcher'
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - '@swc/core'
+  - esbuild
+  - less
+  - nx
+  - prisma
+  - unrs-resolver

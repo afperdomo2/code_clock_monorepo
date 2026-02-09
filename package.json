@@ -1,6 +1,13 @@
 {
   "name": "@code-clock-mono/source",
   "version": "0.0.0",
+  "packageManager": "pnpm@10.28.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma"
+    ]
+  },
   "license": "MIT",
   "scripts": {},
   "private": true,
