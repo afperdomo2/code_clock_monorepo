@@ -5,7 +5,7 @@ import { join } from 'path';
 import { defineConfig } from 'prisma/config';
 
 // Load .env from workspace root
-config({ path: join(__dirname, '../../.env') });
+config({ path: join(__dirname, '../.env') });
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',

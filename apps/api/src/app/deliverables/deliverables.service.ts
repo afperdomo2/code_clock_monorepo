@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@code-clock-mono/prisma-client';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateDeliverableDto } from './dto/create-deliverable.dto';
 import { QueryDeliverablesDto } from './dto/query-deliverables.dto';
 import { UpdateDeliverableDto } from './dto/update-deliverable.dto';

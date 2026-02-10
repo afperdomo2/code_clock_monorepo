@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@code-clock-mono/prisma-client';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { QueryTimeEntriesDto } from './dto/query-time-entries.dto';
 import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';

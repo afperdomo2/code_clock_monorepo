@@ -16,9 +16,8 @@ Monorepo moderno con backend NestJS y frontend Vue 3, orquestado con Nx.
 ```
 apps/
 ├── api/              # Backend (puerto 3000)
+│   └── prisma/        # Acceso a DB con Prisma
 └── client/           # Frontend (puerto 5173)
-libs/
-└── prisma-client/    # Acceso a DB con Prisma
 ```
 
 ## 🛠️ Stack
@@ -47,10 +46,10 @@ pnpm install
 # Crear .env en la raiz del proyecto
 
 # Migraciones
-pnpm prisma migrate dev --config=libs/prisma-client/prisma.config.ts
+pnpm prisma migrate dev --config=apps/api/prisma.config.ts
 
 # Generar cliente (despues de cambios en el schema)
-pnpm prisma generate --config=libs/prisma-client/prisma.config.ts
+pnpm prisma generate --config=apps/api/prisma.config.ts
 ```
 
 ### Ejecutar
@@ -84,9 +83,9 @@ pnpm nx lint client
 pnpm nx format
 
 # Prisma
-pnpm prisma studio --config=libs/prisma-client/prisma.config.ts
-pnpm prisma migrate dev --config=libs/prisma-client/prisma.config.ts
-pnpm prisma generate --config=libs/prisma-client/prisma.config.ts
+pnpm prisma studio --config=apps/api/prisma.config.ts
+pnpm prisma migrate dev --config=apps/api/prisma.config.ts
+pnpm prisma generate --config=apps/api/prisma.config.ts
 
 # Nx graph
 pnpm nx graph
@@ -94,8 +93,8 @@ pnpm nx graph
 
 ## 🧩 Prisma (config separada)
 
-- Schema: `libs/prisma-client/prisma/schema.prisma`
-- Config: `libs/prisma-client/prisma.config.ts`
+- Schema: `apps/api/prisma/schema.prisma`
+- Config: `apps/api/prisma.config.ts`
 - Env: `.env` en la raiz
 
 ## ❗ Troubleshooting
@@ -104,10 +103,10 @@ pnpm nx graph
 
 ```sh
 # Correcto
-pnpm prisma migrate dev --config=libs/prisma-client/prisma.config.ts
+pnpm prisma migrate dev --config=apps/api/prisma.config.ts
 
 # Incorrecto
-pnpm prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
+pnpm prisma migrate dev --schema=apps/api/prisma/schema.prisma
 ```
 
 ## 🧠 Skills (Agentes)
@@ -115,8 +114,8 @@ pnpm prisma migrate dev --schema=libs/prisma-client/prisma/schema.prisma
 Skills instaladas para asistir el desarrollo:
 
 - NestJS Best Practices
- 	- Instalacion: `npx skills add https://github.com/kadajett/agent-nestjs-skills --skill nestjs-best-practices`
- 	- Archivo: [.agents/skills/nestjs-best-practices/SKILL.md](.agents/skills/nestjs-best-practices/SKILL.md)
+  - Instalacion: `npx skills add https://github.com/kadajett/agent-nestjs-skills --skill nestjs-best-practices`
+  - Archivo: [.agents/skills/nestjs-best-practices/SKILL.md](.agents/skills/nestjs-best-practices/SKILL.md)
 
 ## 🤖 IA y MCP
 
