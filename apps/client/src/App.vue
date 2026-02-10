@@ -10,7 +10,10 @@ const layout = computed(() => {
 </script>
 
 <template>
-  <component :is="layout" v-if="layout">
+  <component
+    :is="layout"
+    v-if="layout"
+  >
     <RouterView />
   </component>
   <RouterView v-else />

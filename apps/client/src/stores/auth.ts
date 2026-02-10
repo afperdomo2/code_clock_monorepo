@@ -29,6 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
           const refresh = await api.post<{ access_token: string }>('/auth/refresh');
           accessToken.value = refresh.data.access_token;
           setAccessToken(refresh.data.access_token);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (refreshError) {
           setAccessToken(null);
           accessToken.value = null;

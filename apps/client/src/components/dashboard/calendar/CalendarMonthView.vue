@@ -77,7 +77,13 @@ const handleEventClick = (event: ActivityEvent) => {
     <div
       class="grid grid-cols-7 gap-1 text-sm font-medium text-center text-gray-500"
     >
-      <div v-for="day in weekDays" :key="day" class="py-2">{{ day }}</div>
+      <div
+        v-for="day in weekDays"
+        :key="day"
+        class="py-2"
+      >
+        {{ day }}
+      </div>
     </div>
 
     <div class="grid grid-cols-7 gap-1">
@@ -106,12 +112,12 @@ const handleEventClick = (event: ActivityEvent) => {
           <button
             v-for="(event, eIdx) in getEventsForDay(day.date)"
             :key="eIdx"
-            @click.stop="handleEventClick(event)"
             :class="[
               'block w-full text-left rounded px-1.5 py-1 text-xs cursor-pointer hover:opacity-80 border transition-shadow hover:shadow-sm',
               getProjectColor(event.projectName),
             ]"
             :title="`${event.projectName || 'Sin proyecto'} - ${event.title}`"
+            @click.stop="handleEventClick(event)"
           >
             <div class="flex items-center gap-1 font-bold truncate">
               <component

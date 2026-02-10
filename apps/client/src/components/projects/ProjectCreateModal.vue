@@ -60,7 +60,7 @@ const props = defineProps<{
 
 const isSubmitting = ref(false);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const onSubmit = async (values: any, { resetForm }: any) => {
   isSubmitting.value = true;
   try {
@@ -151,8 +151,8 @@ const onSubmit = async (values: any, { resetForm }: any) => {
           {{ projectToEdit ? 'Editar Proyecto' : 'Nuevo Proyecto' }}
         </h3>
         <button
-          @click="$emit('close')"
           class="p-2 text-gray-400 rounded-lg cursor-pointer hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700"
+          @click="$emit('close')"
         >
           <IconX class="w-6 h-6" />
         </button>
@@ -160,16 +160,16 @@ const onSubmit = async (values: any, { resetForm }: any) => {
 
       <!-- Form -->
       <Form
+        v-slot="{ values }"
         :validation-schema="schema"
         :initial-values="
           projectToEdit || {
             status: ProjectStatus.ACTIVO,
           }
         "
-        @submit="onSubmit"
         class="p-6"
         autocomplete="off"
-        v-slot="{ values }"
+        @submit="onSubmit"
       >
         <div class="grid gap-6 md:grid-cols-2">
           <!-- Nombre -->
@@ -177,8 +177,7 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="name"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Nombre del Proyecto <span class="text-red-500">*</span></label
-            >
+            >Nombre del Proyecto <span class="text-red-500">*</span></label>
             <Field
               name="name"
               type="text"
@@ -196,14 +195,18 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="category"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Categoría <span class="text-red-500">*</span></label
-            >
+            >Categoría <span class="text-red-500">*</span></label>
             <Field
               name="category"
               as="select"
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
-              <option value="" disabled>Seleccionar...</option>
+              <option
+                value=""
+                disabled
+              >
+                Seleccionar...
+              </option>
               <option
                 v-for="category in PROJECT_CATEGORY_OPTIONS"
                 :key="category.value"
@@ -223,13 +226,11 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="client"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Cliente
+            >Cliente
               <span
                 v-if="values.category === ProjectCategory.EMPRESA"
                 class="text-red-500"
-                >*</span
-              ></label
-            >
+              >*</span></label>
             <Field
               name="client"
               type="text"
@@ -247,14 +248,18 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="priority"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Prioridad <span class="text-red-500">*</span></label
-            >
+            >Prioridad <span class="text-red-500">*</span></label>
             <Field
               name="priority"
               as="select"
               class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
-              <option value="" disabled>Seleccionar...</option>
+              <option
+                value=""
+                disabled
+              >
+                Seleccionar...
+              </option>
               <option
                 v-for="priority in PROJECT_PRIORITY_OPTIONS"
                 :key="priority.value"
@@ -274,8 +279,7 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="hours_estimated"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Horas Estimadas</label
-            >
+            >Horas Estimadas</label>
             <Field
               name="hours_estimated"
               type="number"
@@ -293,8 +297,7 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="deadline"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Fecha de Entrega</label
-            >
+            >Fecha de Entrega</label>
             <Field
               name="deadline"
               type="date"
@@ -311,8 +314,7 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="status"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Estado <span class="text-red-500">*</span></label
-            >
+            >Estado <span class="text-red-500">*</span></label>
             <Field
               name="status"
               as="select"
@@ -337,8 +339,7 @@ const onSubmit = async (values: any, { resetForm }: any) => {
             <label
               for="description"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >Descripción</label
-            >
+            >Descripción</label>
             <Field
               name="description"
               as="textarea"
@@ -357,8 +358,8 @@ const onSubmit = async (values: any, { resetForm }: any) => {
         <div class="flex justify-end mt-8 space-x-3">
           <button
             type="button"
-            @click="$emit('close')"
             class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 cursor-pointer"
+            @click="$emit('close')"
           >
             Cancelar
           </button>
@@ -381,14 +382,17 @@ const onSubmit = async (values: any, { resetForm }: any) => {
                 r="10"
                 stroke="currentColor"
                 stroke-width="4"
-              ></circle>
+              />
               <path
                 class="opacity-75"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
+              />
             </svg>
-            <IconDeviceFloppy v-else class="w-5 h-5 mr-2" />
+            <IconDeviceFloppy
+              v-else
+              class="w-5 h-5 mr-2"
+            />
             {{ isSubmitting ? 'Guardando...' : 'Guardar Proyecto' }}
           </button>
         </div>

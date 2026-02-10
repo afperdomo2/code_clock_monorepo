@@ -68,11 +68,12 @@ const handleSetup = handleSubmit(async (values) => {
         Crea el primer usuario administrador para empezar.
       </p>
 
-      <form @submit="handleSetup" class="space-y-4">
+      <form
+        class="space-y-4"
+        @submit="handleSetup"
+      >
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Nombre (opcional)</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Nombre (opcional)</label>
           <input
             v-model="name"
             type="text"
@@ -81,16 +82,17 @@ const handleSetup = handleSubmit(async (values) => {
               'border-red-500 focus:border-red-500': errors.name,
               'border-gray-300 focus:border-indigo-500': !errors.name,
             }"
-          />
-          <span v-if="errors.name" class="text-sm text-red-500">{{
+          >
+          <span
+            v-if="errors.name"
+            class="text-sm text-red-500"
+          >{{
             errors.name
           }}</span>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Correo electronico</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Correo electronico</label>
           <input
             v-model="email"
             type="email"
@@ -99,16 +101,17 @@ const handleSetup = handleSubmit(async (values) => {
               'border-red-500 focus:border-red-500': errors.email,
               'border-gray-300 focus:border-indigo-500': !errors.email,
             }"
-          />
-          <span v-if="errors.email" class="text-sm text-red-500">{{
+          >
+          <span
+            v-if="errors.email"
+            class="text-sm text-red-500"
+          >{{
             errors.email
           }}</span>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Contrasena</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Contrasena</label>
           <input
             v-model="password"
             type="password"
@@ -117,16 +120,17 @@ const handleSetup = handleSubmit(async (values) => {
               'border-red-500 focus:border-red-500': errors.password,
               'border-gray-300 focus:border-indigo-500': !errors.password,
             }"
-          />
-          <span v-if="errors.password" class="text-sm text-red-500">{{
+          >
+          <span
+            v-if="errors.password"
+            class="text-sm text-red-500"
+          >{{
             errors.password
           }}</span>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Confirmar contrasena</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Confirmar contrasena</label>
           <input
             v-model="confirmPassword"
             type="password"
@@ -136,8 +140,11 @@ const handleSetup = handleSubmit(async (values) => {
               'border-gray-300 focus:border-indigo-500':
                 !errors.confirmPassword,
             }"
-          />
-          <span v-if="errors.confirmPassword" class="text-sm text-red-500">
+          >
+          <span
+            v-if="errors.confirmPassword"
+            class="text-sm text-red-500"
+          >
             {{ errors.confirmPassword }}
           </span>
         </div>

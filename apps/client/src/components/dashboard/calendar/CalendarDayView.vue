@@ -88,14 +88,19 @@ const formatDuration = (durationStr?: string) => {
         class="flex flex-col items-center justify-center h-64 text-gray-400"
       >
         <IconCalendarOff class="w-16 h-16 mb-4 opacity-50" />
-        <p class="text-lg font-medium">No hay actividades registradas</p>
+        <p class="text-lg font-medium">
+          No hay actividades registradas
+        </p>
         <p class="text-sm">
           Disfruta tu día libre o registra una nueva actividad.
         </p>
       </div>
 
       <!-- Table View -->
-      <div v-else class="overflow-hidden border border-gray-200 rounded-lg">
+      <div
+        v-else
+        class="overflow-hidden border border-gray-200 rounded-lg"
+      >
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -135,8 +140,8 @@ const formatDuration = (durationStr?: string) => {
             <tr
               v-for="(event, index) in currentDayEvents"
               :key="index"
-              @click="handleEventClick(event)"
               class="transition-colors cursor-pointer hover:bg-gray-50"
+              @click="handleEventClick(event)"
             >
               <td
                 class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
@@ -166,7 +171,9 @@ const formatDuration = (durationStr?: string) => {
                 </div>
               </td>
               <td class="px-6 py-4 text-sm text-gray-500">
-                <div class="font-medium text-gray-900">{{ event.title }}</div>
+                <div class="font-medium text-gray-900">
+                  {{ event.title }}
+                </div>
               </td>
             </tr>
           </tbody>

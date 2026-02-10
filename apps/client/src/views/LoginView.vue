@@ -50,11 +50,12 @@ const handleAuth = handleSubmit(async (values) => {
         Bienvenido a Code Clock
       </h2>
 
-      <form @submit="handleAuth" class="space-y-4">
+      <form
+        class="space-y-4"
+        @submit="handleAuth"
+      >
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Correo electrónico</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Correo electrónico</label>
           <input
             v-model="email"
             type="email"
@@ -63,16 +64,17 @@ const handleAuth = handleSubmit(async (values) => {
               'border-red-500 focus:border-red-500': errors.email,
               'border-gray-300 focus:border-indigo-500': !errors.email,
             }"
-          />
-          <span v-if="errors.email" class="text-sm text-red-500">{{
+          >
+          <span
+            v-if="errors.email"
+            class="text-sm text-red-500"
+          >{{
             errors.email
           }}</span>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Contraseña</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Contraseña</label>
           <input
             v-model="password"
             type="password"
@@ -81,8 +83,11 @@ const handleAuth = handleSubmit(async (values) => {
               'border-red-500 focus:border-red-500': errors.password,
               'border-gray-300 focus:border-indigo-500': !errors.password,
             }"
-          />
-          <span v-if="errors.password" class="text-sm text-red-500">{{
+          >
+          <span
+            v-if="errors.password"
+            class="text-sm text-red-500"
+          >{{
             errors.password
           }}</span>
         </div>

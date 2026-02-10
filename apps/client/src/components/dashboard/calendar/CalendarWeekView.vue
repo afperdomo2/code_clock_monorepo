@@ -85,11 +85,11 @@ const handleEventClick = (event: ActivityEvent) => {
           <button
             v-for="(event, index) in getEventsForDay(day.date)"
             :key="index"
-            @click="handleEventClick(event)"
             :class="[
               'block w-full text-left rounded-lg p-3 text-sm cursor-pointer hover:opacity-90 border transition-shadow hover:shadow-md',
               getProjectColor(event.projectName),
             ]"
+            @click="handleEventClick(event)"
           >
             <div class="flex items-center justify-between mb-1">
               <span class="flex items-center gap-2 text-xs font-bold truncate">

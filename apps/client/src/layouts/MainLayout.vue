@@ -33,7 +33,7 @@ const handleLogout = async () => {
       v-if="isSidebarOpen"
       class="fixed inset-0 z-20 bg-black/50 transition-opacity lg:hidden"
       @click="toggleSidebar"
-    ></div>
+    />
 
     <!-- Sidebar -->
     <aside
@@ -45,8 +45,14 @@ const handleLogout = async () => {
       <div class="flex h-full flex-col">
         <!-- Logo / Header -->
         <div class="flex h-16 items-center justify-center border-b px-6">
-          <img src="/app_logo.png" alt="Code Clock Logo" class="mr-3 h-8 w-8" />
-          <h1 class="text-2xl font-bold text-indigo-600">Code Clock</h1>
+          <img
+            src="/app_logo.png"
+            alt="Code Clock Logo"
+            class="mr-3 h-8 w-8"
+          >
+          <h1 class="text-2xl font-bold text-indigo-600">
+            Code Clock
+          </h1>
         </div>
 
         <!-- Navigation -->
@@ -86,15 +92,17 @@ const handleLogout = async () => {
               <IconUser class="h-6 w-6" />
             </div>
             <div class="ml-3 overflow-hidden">
-              <p class="truncate text-sm font-medium text-gray-900">Usuario</p>
+              <p class="truncate text-sm font-medium text-gray-900">
+                Usuario
+              </p>
               <p class="truncate text-xs text-gray-500">
                 {{ authStore.userEmail }}
               </p>
             </div>
           </div>
           <button
-            @click="handleLogout"
             class="flex w-full items-center justify-center rounded-lg border border-transparent bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+            @click="handleLogout"
           >
             <IconLogout class="mr-2 h-4 w-4" />
             Cerrar Sesión
@@ -111,17 +119,23 @@ const handleLogout = async () => {
       >
         <span class="text-xl font-bold text-indigo-600">Code Clock</span>
         <button
-          @click="toggleSidebar"
           class="rounded-md p-2 text-gray-600 hover:bg-gray-100 focus:outline-none cursor-pointer"
+          @click="toggleSidebar"
         >
-          <IconMenu2 v-if="!isSidebarOpen" class="h-6 w-6" />
-          <IconX v-else class="h-6 w-6" />
+          <IconMenu2
+            v-if="!isSidebarOpen"
+            class="h-6 w-6"
+          />
+          <IconX
+            v-else
+            class="h-6 w-6"
+          />
         </button>
       </header>
 
       <!-- Page Content -->
       <main class="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 p-6">
-        <slot></slot>
+        <slot />
       </main>
     </div>
   </div>

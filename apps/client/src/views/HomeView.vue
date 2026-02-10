@@ -38,9 +38,9 @@ const refreshCalendar = async () => {
         </h2>
         <div class="flex space-x-2">
           <button
-            @click="refreshCalendar"
             class="flex items-center justify-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             :disabled="isRefreshing"
+            @click="refreshCalendar"
           >
             <IconRefresh
               :class="['w-5 h-5 mr-2', isRefreshing ? 'animate-spin' : '']"
@@ -48,8 +48,8 @@ const refreshCalendar = async () => {
             Refrescar
           </button>
           <button
-            @click="isTimeModalOpen = true"
             class="flex items-center justify-center px-4 py-2 text-white bg-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-700"
+            @click="isTimeModalOpen = true"
           >
             <IconPlayerPlay class="w-5 h-5 mr-2" />
             Registrar Actividad

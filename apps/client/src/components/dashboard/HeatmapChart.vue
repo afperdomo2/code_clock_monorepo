@@ -97,7 +97,11 @@ const option = computed(() => ({
       Actividad ({{ year }})
     </h3>
     <div class="h-[180px] min-w-[700px]">
-      <VChart class="chart" :option="option" autoresize />
+      <VChart
+        class="chart"
+        :option="option"
+        autoresize
+      />
     </div>
   </div>
 </template>

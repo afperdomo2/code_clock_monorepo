@@ -177,8 +177,8 @@ const onSubmit = async (
           Registrar Actividad
         </h3>
         <button
-          @click="$emit('close')"
           class="p-2 text-gray-400 rounded-lg cursor-pointer hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700"
+          @click="$emit('close')"
         >
           <IconX class="w-6 h-6" />
         </button>
@@ -187,13 +187,13 @@ const onSubmit = async (
       <!-- Mode Switcher -->
       <div class="flex border-b border-gray-100 dark:border-gray-700">
         <button
-          @click="mode = 'timer'"
           :class="[
             'flex-1 py-3 text-sm font-medium transition-colors cursor-pointer',
             mode === 'timer'
               ? 'border-b-2 border-indigo-600 text-indigo-600'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
           ]"
+          @click="mode = 'timer'"
         >
           <div class="flex items-center justify-center">
             <IconClock class="w-5 h-5 mr-2" />
@@ -201,13 +201,13 @@ const onSubmit = async (
           </div>
         </button>
         <button
-          @click="mode = 'manual'"
           :class="[
             'flex-1 py-3 text-sm font-medium transition-colors cursor-pointer',
             mode === 'manual'
               ? 'border-b-2 border-indigo-600 text-indigo-600'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
           ]"
+          @click="mode = 'manual'"
         >
           <div class="flex items-center justify-center">
             <IconManualGearbox class="w-5 h-5 mr-2" />
@@ -218,7 +218,10 @@ const onSubmit = async (
 
       <div class="p-6">
         <!-- Timer Mode UI -->
-        <div v-if="mode === 'timer'" class="flex flex-col items-center py-8">
+        <div
+          v-if="mode === 'timer'"
+          class="flex flex-col items-center py-8"
+        >
           <div
             class="mb-8 font-mono text-6xl font-bold text-gray-900 dark:text-white"
           >
@@ -226,21 +229,27 @@ const onSubmit = async (
           </div>
           <div class="flex space-x-4">
             <button
-              @click="toggleTimer"
               :class="[
                 'flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105 focus:outline-none focus:ring-4 cursor-pointer',
                 timerStore.isRunning
                   ? 'bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-300'
                   : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-300',
               ]"
+              @click="toggleTimer"
             >
-              <IconPlayerPause v-if="timerStore.isRunning" class="w-8 h-8" />
-              <IconPlayerPlay v-else class="w-8 h-8 pl-1" />
+              <IconPlayerPause
+                v-if="timerStore.isRunning"
+                class="w-8 h-8"
+              />
+              <IconPlayerPlay
+                v-else
+                class="w-8 h-8 pl-1"
+              />
             </button>
             <button
               v-if="timerStore.seconds > 0"
-              @click="stopTimer"
               class="flex items-center justify-center w-16 h-16 text-white transition-transform bg-green-600 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300"
+              @click="stopTimer"
             >
               <IconDeviceFloppy class="w-8 h-8" />
             </button>
@@ -258,7 +267,6 @@ const onSubmit = async (
         <Form
           v-if="mode === 'manual'"
           :validation-schema="schema"
-          @submit="onSubmit"
           :initial-values="{
             project_id: projectId || '',
             date: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -271,6 +279,7 @@ const onSubmit = async (
                 ? Math.ceil((timerStore.seconds % 3600) / 60)
                 : 0,
           }"
+          @submit="onSubmit"
         >
           <div class="space-y-4">
             <!-- Project Select -->
@@ -285,8 +294,17 @@ const onSubmit = async (
                 as="select"
                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
-                <option value="" disabled>Seleccionar Proyecto</option>
-                <option v-for="p in projects" :key="p.id" :value="p.id">
+                <option
+                  value=""
+                  disabled
+                >
+                  Seleccionar Proyecto
+                </option>
+                <option
+                  v-for="p in projects"
+                  :key="p.id"
+                  :value="p.id"
+                >
                   {{ p.name }}
                 </option>
               </Field>
@@ -303,19 +321,22 @@ const onSubmit = async (
               >
                 Tipo de Actividad
               </label>
-              <Field name="activity_type" v-slot="{ field, errorMessage }">
+              <Field
+                v-slot="{ field, errorMessage }"
+                name="activity_type"
+              >
                 <div class="grid grid-cols-3 gap-3">
                   <button
                     v-for="(config, type) in ACTIVITY_CONFIG"
                     :key="type"
                     type="button"
-                    @click="field.onChange(type)"
                     :class="[
                       'flex flex-col items-center justify-center p-3 rounded-lg border transition-all cursor-pointer',
                       field.value === type
                         ? 'border-indigo-600 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-500'
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600',
                     ]"
+                    @click="field.onChange(type)"
                   >
                     <component
                       :is="config.icon"
@@ -325,7 +346,10 @@ const onSubmit = async (
                     <span class="text-xs font-medium">{{ config.label }}</span>
                   </button>
                 </div>
-                <span v-if="errorMessage" class="mt-1 text-sm text-red-600">{{
+                <span
+                  v-if="errorMessage"
+                  class="mt-1 text-sm text-red-600"
+                >{{
                   errorMessage
                 }}</span>
               </Field>
@@ -344,7 +368,10 @@ const onSubmit = async (
                   type="datetime-local"
                   class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 />
-                <ErrorMessage name="date" class="mt-1 text-sm text-red-600" />
+                <ErrorMessage
+                  name="date"
+                  class="mt-1 text-sm text-red-600"
+                />
               </div>
 
               <!-- Duration -->
@@ -436,14 +463,17 @@ const onSubmit = async (
                   r="10"
                   stroke="currentColor"
                   stroke-width="4"
-                ></circle>
+                />
                 <path
                   class="opacity-75"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
+                />
               </svg>
-              <IconDeviceFloppy v-else class="w-5 h-5 mr-2" />
+              <IconDeviceFloppy
+                v-else
+                class="w-5 h-5 mr-2"
+              />
               {{ isSubmitting ? 'Guardando...' : 'Guardar Registro' }}
             </button>
           </div>

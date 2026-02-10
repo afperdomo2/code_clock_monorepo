@@ -134,7 +134,7 @@ const categoryIcon = computed(() => {
         <span
           class="mr-1.5 h-2 w-2 rounded-full"
           :class="statusConfig.dot"
-        ></span>
+        />
         {{ PROJECT_STATUS_LABELS[project.status] ?? project.status }}
       </span>
 
@@ -151,7 +151,7 @@ const categoryIcon = computed(() => {
                 ? priorityColorClass
                 : 'bg-gray-200 dark:bg-gray-600'
             "
-          ></div>
+          />
           <div
             class="w-1 h-4 transition-colors rounded-full"
             :class="
@@ -159,7 +159,7 @@ const categoryIcon = computed(() => {
                 ? priorityColorClass
                 : 'bg-gray-200 dark:bg-gray-600'
             "
-          ></div>
+          />
           <div
             class="w-1 h-5 transition-colors rounded-full"
             :class="
@@ -167,7 +167,7 @@ const categoryIcon = computed(() => {
                 ? priorityColorClass
                 : 'bg-gray-200 dark:bg-gray-600'
             "
-          ></div>
+          />
         </div>
       </div>
     </div>
@@ -200,7 +200,7 @@ const categoryIcon = computed(() => {
             class="h-full transition-all duration-500 ease-out"
             :class="progressColor"
             :style="{ width: `${progressPercentage}%` }"
-          ></div>
+          />
         </div>
       </div>
       <div v-else>
@@ -228,7 +228,10 @@ const categoryIcon = computed(() => {
           <IconCalendar class="mr-1.5 h-4 w-4" />
           {{ dayjs(project.deadline).format('DD MMM') }}
         </div>
-        <div v-else class="flex items-center text-xs font-medium text-gray-400">
+        <div
+          v-else
+          class="flex items-center text-xs font-medium text-gray-400"
+        >
           <IconCalendar class="mr-1.5 h-4 w-4" />
           <span>Sin fecha</span>
         </div>
@@ -237,7 +240,10 @@ const categoryIcon = computed(() => {
           <span
             class="flex items-center px-2 py-1 mr-0 bg-gray-100 rounded dark:bg-gray-700"
           >
-            <component :is="categoryIcon" class="w-3 h-3 mr-1" />
+            <component
+              :is="categoryIcon"
+              class="w-3 h-3 mr-1"
+            />
             {{
               project.category === ProjectCategory.EMPRESA
                 ? project.client

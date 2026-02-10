@@ -92,20 +92,20 @@ defineExpose({
         </h3>
         <div class="flex items-center p-1 bg-gray-100 rounded-lg">
           <button
-            @click="store.prev()"
             class="p-1 text-gray-600 transition-all rounded-md hover:bg-white hover:shadow-sm"
+            @click="store.prev()"
           >
             <IconChevronLeft class="w-5 h-5" />
           </button>
           <button
-            @click="store.today()"
             class="px-3 py-1 text-xs font-medium text-gray-600 transition-all rounded-md hover:bg-white hover:shadow-sm"
+            @click="store.today()"
           >
             Hoy
           </button>
           <button
-            @click="store.next()"
             class="p-1 text-gray-600 transition-all rounded-md hover:bg-white hover:shadow-sm"
+            @click="store.next()"
           >
             <IconChevronRight class="w-5 h-5" />
           </button>
@@ -114,37 +114,37 @@ defineExpose({
 
       <div class="flex p-1 bg-gray-100 rounded-lg">
         <button
-          @click="store.setViewMode('day')"
           :class="[
             'flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all',
             store.viewMode === 'day'
               ? 'bg-white text-indigo-600 shadow-sm'
               : 'text-gray-500 hover:text-gray-700',
           ]"
+          @click="store.setViewMode('day')"
         >
           <IconLayoutList class="w-4 h-4 mr-1.5" />
           Día
         </button>
         <button
-          @click="store.setViewMode('week')"
           :class="[
             'flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all',
             store.viewMode === 'week'
               ? 'bg-white text-indigo-600 shadow-sm'
               : 'text-gray-500 hover:text-gray-700',
           ]"
+          @click="store.setViewMode('week')"
         >
           <IconLayoutGrid class="w-4 h-4 mr-1.5" />
           Semana
         </button>
         <button
-          @click="store.setViewMode('month')"
           :class="[
             'flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-all',
             store.viewMode === 'month'
               ? 'bg-white text-indigo-600 shadow-sm'
               : 'text-gray-500 hover:text-gray-700',
           ]"
+          @click="store.setViewMode('month')"
         >
           <IconCalendar class="w-4 h-4 mr-1.5" />
           Mes

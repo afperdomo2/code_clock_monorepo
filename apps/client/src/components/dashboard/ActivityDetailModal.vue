@@ -35,8 +35,8 @@ defineEmits<{
           Detalles de la Actividad
         </h3>
         <button
-          @click="$emit('close')"
           class="p-2 text-gray-400 rounded-lg cursor-pointer hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700"
+          @click="$emit('close')"
         >
           <IconX class="w-6 h-6" />
         </button>
@@ -55,12 +55,18 @@ defineEmits<{
             <span>{{ dayjs(event.date).format('DD-MM-YYYY HH:mm') }}</span>
           </div>
 
-          <div v-if="event.duration" class="flex items-center">
+          <div
+            v-if="event.duration"
+            class="flex items-center"
+          >
             <IconClock class="w-5 h-5 mr-2 text-gray-400" />
             <span>{{ event.duration }}</span>
           </div>
 
-          <div v-if="event.projectName" class="flex items-center">
+          <div
+            v-if="event.projectName"
+            class="flex items-center"
+          >
             <IconBriefcase class="w-5 h-5 mr-2 text-gray-400" />
             <span class="mr-1">Proyecto:</span>
             <RouterLink
@@ -86,8 +92,8 @@ defineEmits<{
 
       <div class="p-6 border-t border-gray-100 dark:border-gray-700">
         <button
-          @click="$emit('close')"
           class="w-full rounded-lg bg-gray-100 px-5 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 cursor-pointer"
+          @click="$emit('close')"
         >
           Cerrar
         </button>

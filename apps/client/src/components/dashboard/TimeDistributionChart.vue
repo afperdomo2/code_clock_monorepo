@@ -84,7 +84,7 @@ const option = computed(() => ({
     axisPointer: {
       type: 'shadow',
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     formatter: (params: any[]) => {
       let result = `<div class="mb-1 font-bold">${params[0].axisValue}</div>`;
       let total = 0;
@@ -146,7 +146,11 @@ const option = computed(() => ({
       Distribución de Tiempo (Semana Actual)
     </h3>
     <div class="h-[400px] w-full">
-      <VChart class="chart" :option="option" autoresize />
+      <VChart
+        class="chart"
+        :option="option"
+        autoresize
+      />
     </div>
   </div>
 </template>
