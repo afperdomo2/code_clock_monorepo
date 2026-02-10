@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { ProjectsModule } from './projects/projects.module';
-import { DeliverablesModule } from './deliverables/deliverables.module';
-import { TimeEntriesModule } from './time-entries/time-entries.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { FirstRunGuard } from './common/guards/first-run.guard';
+import { DeliverablesModule } from './deliverables/deliverables.module';
+import { ProjectsModule } from './projects/projects.module';
+import { SetupModule } from './setup/setup.module';
+import { TimeEntriesModule } from './time-entries/time-entries.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,13 +23,21 @@ import { AuthModule } from './auth/auth.module';
     DeliverablesModule,
     TimeEntriesModule,
     AuthModule,
+    SetupModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: FirstRunGuard,
     },
   ],
 })

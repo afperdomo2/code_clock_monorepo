@@ -8,7 +8,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { QueryTimeEntriesDto } from './dto/query-time-entries.dto';
@@ -16,6 +21,7 @@ import { TimeEntryResponseDto } from './dto/time-entry-response.dto';
 import { TimeEntriesService } from './time-entries.service';
 
 @ApiTags('time-entries')
+@ApiBearerAuth('access-token')
 @Controller('time-entries')
 export class TimeEntriesController {
   constructor(private readonly timeEntriesService: TimeEntriesService) {}

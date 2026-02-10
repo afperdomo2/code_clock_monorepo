@@ -71,6 +71,11 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
+  async hasUsers(): Promise<boolean> {
+    const count = await this.prisma.user.count();
+    return count > 0;
+  }
+
   async findOne(id: string): Promise<User> {
     const user = (await this.prisma.user.findUnique({
       where: { id },

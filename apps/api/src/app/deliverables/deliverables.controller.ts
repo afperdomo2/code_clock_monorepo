@@ -9,7 +9,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CreateDeliverableDto } from './dto/create-deliverable.dto';
 import { DeliverableResponseDto } from './dto/deliverable-response.dto';
@@ -18,6 +23,7 @@ import { UpdateDeliverableDto } from './dto/update-deliverable.dto';
 import { DeliverablesService } from './deliverables.service';
 
 @ApiTags('deliverables')
+@ApiBearerAuth('access-token')
 @Controller('deliverables')
 export class DeliverablesController {
   constructor(private readonly deliverablesService: DeliverablesService) {}

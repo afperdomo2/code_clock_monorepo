@@ -1,5 +1,10 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
@@ -25,6 +30,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
   @Throttle({ short: { limit: 5, ttl: 60_000 } })
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Change password' })
   @ApiResponse({ status: 200 })
   changePassword(
