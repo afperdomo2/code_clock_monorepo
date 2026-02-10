@@ -10,9 +10,10 @@ import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 export class ProjectsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateProjectDto) {
+  async create(dto: CreateProjectDto, userId: string) {
     return this.prisma.project.create({
       data: {
+        user_id: userId,
         name: dto.name,
         client: dto.client ?? null,
         category: dto.category,
@@ -26,11 +27,12 @@ export class ProjectsService {
     });
   }
 
-  async findAll(query: QueryProjectsDto) {
+  async findAll(query: QueryProjectsDto, userId: string) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
     const where = {
+      user_id: userId,
       status: query.status,
       client: query.client,
       name: query.search
@@ -57,9 +59,9 @@ export class ProjectsService {
     };
   }
 
-  async findOne(id: string) {
-    const project = await this.prisma.project.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const project = await this.prisma.project.findFirst({
+      where: { id, user_id: userId },
     });
 
     if (!project) {
@@ -69,8 +71,8 @@ export class ProjectsService {
     return project;
   }
 
-  async update(id: string, dto: UpdateProjectDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateProjectDto, userId: string) {
+    await this.findOne(id, userId);
 
     return this.prisma.project.update({
       where: { id },
@@ -88,8 +90,8 @@ export class ProjectsService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
     return this.prisma.project.delete({ where: { id } });
   }
 }

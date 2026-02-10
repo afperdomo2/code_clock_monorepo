@@ -8,9 +8,11 @@ import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 export class TimeEntriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateTimeEntryDto) {
+  async create(dto: CreateTimeEntryDto, userId: string) {
+    await this.ensureProjectOwnership(dto.project_id, userId);
     return this.prisma.timeEntry.create({
       data: {
+        user_id: userId,
         project_id: dto.project_id,
         activity_type: dto.activity_type,
         description: dto.description,
@@ -21,11 +23,12 @@ export class TimeEntriesService {
     });
   }
 
-  async findAll(query: QueryTimeEntriesDto) {
+  async findAll(query: QueryTimeEntriesDto, userId: string) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
     const where = {
+      user_id: userId,
       project_id: query.project_id,
       date:
         query.from || query.to
@@ -52,9 +55,9 @@ export class TimeEntriesService {
     };
   }
 
-  async findOne(id: string) {
-    const entry = await this.prisma.timeEntry.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const entry = await this.prisma.timeEntry.findFirst({
+      where: { id, user_id: userId },
     });
 
     if (!entry) {
@@ -64,12 +67,12 @@ export class TimeEntriesService {
     return entry;
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
     return this.prisma.timeEntry.delete({ where: { id } });
   }
 
-  async findByMonth(month: string) {
+  async findByMonth(month: string, userId: string) {
     const { year, monthIndex } = this.parseMonth(month);
     if (Number.isNaN(year) || Number.isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
       throw new BadRequestException('Invalid month');
@@ -79,6 +82,7 @@ export class TimeEntriesService {
 
     return this.prisma.timeEntry.findMany({
       where: {
+        user_id: userId,
         date: {
           gte: start,
           lte: end,
@@ -86,6 +90,17 @@ export class TimeEntriesService {
       },
       orderBy: { date: 'desc' },
     });
+  }
+
+  private async ensureProjectOwnership(projectId: string, userId: string) {
+    const project = await this.prisma.project.findFirst({
+      where: { id: projectId, user_id: userId },
+      select: { id: true },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${projectId} not found`);
+    }
   }
 
   private parseMonth(value: string) {

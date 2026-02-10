@@ -1,30 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 
 export class User {
   @ApiProperty({
     description: 'The unique identifier of the user',
     format: 'uuid',
   })
-  id: string;
+  @Expose()
+  id!: string;
 
   @ApiProperty({
     description: 'The email of the user',
     example: 'user@example.com',
   })
-  email: string;
+  @Expose()
+  email!: string;
 
   @ApiProperty({ description: 'The name of the user', required: false })
+  @Expose()
   name?: string;
 
   @ApiProperty({ description: 'Whether the user is an admin' })
-  is_admin: boolean;
+  @Expose({ name: 'is_admin' })
+  isAdmin!: boolean;
 
   @ApiProperty({ description: 'The date when the user was created' })
-  created_at: Date;
+  @Expose({ name: 'created_at' })
+  createdAt!: Date;
 
   @ApiProperty({
     description: 'The date when the user was last updated',
     required: false,
   })
-  updated_at?: Date;
+  @Expose({ name: 'updated_at' })
+  updatedAt?: Date;
 }

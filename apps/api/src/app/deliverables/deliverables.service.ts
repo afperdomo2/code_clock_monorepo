@@ -9,9 +9,11 @@ import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
 export class DeliverablesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateDeliverableDto) {
+  async create(dto: CreateDeliverableDto, userId: string) {
+    await this.ensureProjectOwnership(dto.project_id, userId);
     return this.prisma.deliverable.create({
       data: {
+        user_id: userId,
         project_id: dto.project_id,
         title: dto.title,
         deadline: dto.deadline ? new Date(dto.deadline) : null,
@@ -20,11 +22,12 @@ export class DeliverablesService {
     });
   }
 
-  async findAll(query: QueryDeliverablesDto) {
+  async findAll(query: QueryDeliverablesDto, userId: string) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
     const where = {
+      user_id: userId,
       project_id: query.project_id,
     };
 
@@ -44,9 +47,9 @@ export class DeliverablesService {
     };
   }
 
-  async findOne(id: string) {
-    const deliverable = await this.prisma.deliverable.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const deliverable = await this.prisma.deliverable.findFirst({
+      where: { id, user_id: userId },
     });
 
     if (!deliverable) {
@@ -56,8 +59,8 @@ export class DeliverablesService {
     return deliverable;
   }
 
-  async update(id: string, dto: UpdateDeliverableDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateDeliverableDto, userId: string) {
+    await this.findOne(id, userId);
 
     return this.prisma.deliverable.update({
       where: { id },
@@ -69,8 +72,19 @@ export class DeliverablesService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
     return this.prisma.deliverable.delete({ where: { id } });
+  }
+
+  private async ensureProjectOwnership(projectId: string, userId: string) {
+    const project = await this.prisma.project.findFirst({
+      where: { id: projectId, user_id: userId },
+      select: { id: true },
+    });
+
+    if (!project) {
+      throw new NotFoundException(`Project with ID ${projectId} not found`);
+    }
   }
 }

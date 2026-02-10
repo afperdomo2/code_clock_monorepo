@@ -42,12 +42,17 @@ model User {
   created_at               DateTime  @default(now()) @db.Timestamptz(6)
   updated_at               DateTime? @updatedAt @db.Timestamptz(6)
 
+  projects     Project[]
+  time_entries TimeEntry[]
+  deliverables Deliverable[]
+
   @@index([refresh_token_hash])
   @@map("users")
 }
 
 model Project {
   id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String          @db.Uuid
   name            String          @db.VarChar(255)
   client          String?         @db.VarChar(255)
   category        ProjectCategory
@@ -62,12 +67,15 @@ model Project {
 
   time_entries TimeEntry[]
   deliverables Deliverable[]
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  @@index([user_id])
   @@map("projects")
 }
 
 model TimeEntry {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String    @db.Uuid
   project_id    String    @db.Uuid
   activity_type String    @db.VarChar(100)
   description   String    @db.Text
@@ -77,13 +85,16 @@ model TimeEntry {
   created_at    DateTime  @default(now()) @db.Timestamptz(6)
 
   project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([project_id])
+  @@index([user_id])
   @@map("time_entries")
 }
 
 model Deliverable {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String    @db.Uuid
   project_id String    @db.Uuid
   title      String    @db.VarChar(255)
   deadline   DateTime? @db.Timestamptz(6)
@@ -91,7 +102,9 @@ model Deliverable {
   created_at DateTime  @default(now()) @db.Timestamptz(6)
 
   project Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([project_id])
+  @@index([user_id])
   @@map("deliverables")
 }
