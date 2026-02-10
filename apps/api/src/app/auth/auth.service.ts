@@ -1,9 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { createHash, randomUUID } from 'crypto';
 import { UsersService } from '../users/users.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/login.dto';
+
+const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
+const REFRESH_TOKEN_TTL_DAYS = 30;
 
 @Injectable()
 export class AuthService {
@@ -28,11 +32,62 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const access_token = await this.jwtService.signAsync(payload);
 
+    const refresh_token = randomUUID();
+    const refresh_token_hash = this.hashRefreshToken(refresh_token);
+    const refresh_token_expires_at = this.getRefreshTokenExpiresAt();
+    await this.usersService.updateRefreshToken(
+      user.id,
+      refresh_token_hash,
+      refresh_token_expires_at,
+    );
+
     return {
       access_token,
+      refresh_token,
       token_type: 'Bearer',
-      expires_in: 900,
+      expires_in: ACCESS_TOKEN_TTL_SECONDS,
     };
+  }
+
+  async refresh(refresh_token: string) {
+    const refresh_token_hash = this.hashRefreshToken(refresh_token);
+    const user = await this.usersService.findByRefreshTokenHash(
+      refresh_token_hash,
+    );
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const payload = { sub: user.id, email: user.email };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    const new_refresh_token = randomUUID();
+    const new_refresh_token_hash = this.hashRefreshToken(new_refresh_token);
+    const refresh_token_expires_at = this.getRefreshTokenExpiresAt();
+    await this.usersService.updateRefreshToken(
+      user.id,
+      new_refresh_token_hash,
+      refresh_token_expires_at,
+    );
+
+    return {
+      access_token,
+      refresh_token: new_refresh_token,
+      token_type: 'Bearer',
+      expires_in: ACCESS_TOKEN_TTL_SECONDS,
+    };
+  }
+
+  async logout(refresh_token: string | null) {
+    if (!refresh_token) {
+      return { success: true };
+    }
+
+    const refresh_token_hash = this.hashRefreshToken(refresh_token);
+    await this.usersService.clearRefreshTokenByHash(refresh_token_hash);
+
+    return { success: true };
   }
 
   async changePassword(userId: string, dto: ChangePasswordDto) {
@@ -54,5 +109,15 @@ export class AuthService {
     await this.usersService.updatePassword(userId, newHash);
 
     return { success: true };
+  }
+
+  private hashRefreshToken(token: string) {
+    return createHash('sha256').update(token).digest('hex');
+  }
+
+  private getRefreshTokenExpiresAt() {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_TTL_DAYS);
+    return expiresAt;
   }
 }

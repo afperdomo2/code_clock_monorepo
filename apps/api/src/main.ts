@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { HttpExceptionFilter } from './app/common/filters/http-exception.filter';
 
@@ -20,9 +21,12 @@ async function bootstrap() {
 
   app.enableCors({
     origin: ['http://localhost:4200', 'http://localhost:5173'],
+    credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({

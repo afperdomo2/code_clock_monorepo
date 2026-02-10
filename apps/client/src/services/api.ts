@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+let accessToken: string | null = null;
+
+export const setAccessToken = (token: string | null) => {
+  accessToken = token;
+};
+
+export const getAccessToken = () => accessToken;
+
 export const getApiErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const payload = error.response?.data as
@@ -26,10 +34,18 @@ export const getApiErrorMessage = (error: unknown): string => {
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',
+  withCredentials: true,
 });
 
+const refreshClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',
+  withCredentials: true,
+});
+
+let refreshPromise: Promise<string> | null = null;
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = getAccessToken();
   if (token) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${token}`;
@@ -39,7 +55,41 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config as
+      | (typeof error.config & { _retry?: boolean })
+      | undefined;
+    if (
+      error?.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        refreshPromise =
+          refreshPromise ??
+          refreshClient
+            .post<{ access_token: string }>('/auth/refresh')
+            .then((res) => res.data.access_token)
+            .finally(() => {
+              refreshPromise = null;
+            });
+
+        const newToken = await refreshPromise;
+        setAccessToken(newToken);
+        originalRequest.headers = originalRequest.headers ?? {};
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        setAccessToken(null);
+        if (refreshError instanceof Error) {
+          refreshError.message = getApiErrorMessage(refreshError);
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+
     if (error instanceof Error) {
       error.message = getApiErrorMessage(error);
     }

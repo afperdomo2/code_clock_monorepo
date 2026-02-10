@@ -94,4 +94,38 @@ export class UsersService {
       data: { password_hash },
     }) as unknown as Promise<User>;
   }
+
+  async updateRefreshToken(
+    id: string,
+    refresh_token_hash: string,
+    refresh_token_expires_at: Date,
+  ) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { refresh_token_hash, refresh_token_expires_at },
+    });
+  }
+
+  async clearRefreshToken(id: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { refresh_token_hash: null, refresh_token_expires_at: null },
+    });
+  }
+
+  async findByRefreshTokenHash(refresh_token_hash: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        refresh_token_hash,
+        refresh_token_expires_at: { gt: new Date() },
+      },
+    });
+  }
+
+  async clearRefreshTokenByHash(refresh_token_hash: string) {
+    return this.prisma.user.updateMany({
+      where: { refresh_token_hash },
+      data: { refresh_token_hash: null, refresh_token_expires_at: null },
+    });
+  }
 }

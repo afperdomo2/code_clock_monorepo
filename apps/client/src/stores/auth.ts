@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
-import api, { getApiErrorMessage } from '../services/api';
 import Swal from 'sweetalert2';
+import { computed, ref } from 'vue';
+import api, { getApiErrorMessage, setAccessToken } from '../services/api';
 
 type RegisterPayload = {
   email: string;
@@ -11,7 +11,7 @@ type RegisterPayload = {
 
 export const useAuthStore = defineStore('auth', () => {
   const userEmail = ref<string | null>(localStorage.getItem('userEmail'));
-  const accessToken = ref<string | null>(localStorage.getItem('accessToken'));
+  const accessToken = ref<string | null>(null);
   const loading = ref(false);
   const needsSetup = ref<boolean | null>(null);
   const initialized = ref(false);
@@ -23,6 +23,17 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true;
       const { data } = await api.get<{ needsSetup: boolean }>('/setup');
       needsSetup.value = data.needsSetup;
+
+      if (!data.needsSetup) {
+        try {
+          const refresh = await api.post<{ access_token: string }>('/auth/refresh');
+          accessToken.value = refresh.data.access_token;
+          setAccessToken(refresh.data.access_token);
+        } catch (refreshError) {
+          setAccessToken(null);
+          accessToken.value = null;
+        }
+      }
     } catch (error) {
       console.error('Failed to check setup status:', error);
       Swal.fire({
@@ -43,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       password,
     });
     accessToken.value = data.access_token;
-    localStorage.setItem('accessToken', data.access_token);
+    setAccessToken(data.access_token);
     userEmail.value = email;
     localStorage.setItem('userEmail', email);
   };
@@ -58,7 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       accessToken.value = null;
       userEmail.value = null;
-      localStorage.removeItem('accessToken');
+      setAccessToken(null);
       localStorage.removeItem('userEmail');
     }
   };
