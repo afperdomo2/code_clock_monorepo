@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { QueryTimeEntriesDto } from './dto/query-time-entries.dto';
@@ -67,5 +67,41 @@ export class TimeEntriesService {
   async remove(id: string) {
     await this.findOne(id);
     return this.prisma.timeEntry.delete({ where: { id } });
+  }
+
+  async findByMonth(month: string) {
+    const { year, monthIndex } = this.parseMonth(month);
+    if (Number.isNaN(year) || Number.isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+      throw new BadRequestException('Invalid month');
+    }
+    const start = new Date(Date.UTC(year, monthIndex, 1, 0, 0, 0));
+    const end = new Date(Date.UTC(year, monthIndex + 1, 0, 23, 59, 59, 999));
+
+    return this.prisma.timeEntry.findMany({
+      where: {
+        date: {
+          gte: start,
+          lte: end,
+        },
+      },
+      orderBy: { date: 'desc' },
+    });
+  }
+
+  private parseMonth(value: string) {
+    const [partA, partB] = value.split('-');
+    if (!partA || !partB) {
+      return { year: NaN, monthIndex: NaN };
+    }
+
+    if (partA.length === 4) {
+      const year = Number(partA);
+      const month = Number(partB);
+      return { year, monthIndex: month - 1 };
+    }
+
+    const year = Number(partB);
+    const month = Number(partA);
+    return { year, monthIndex: month - 1 };
   }
 }

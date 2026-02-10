@@ -5,5 +5,5 @@ export const queryKeys = {
   timeEntries: (projectId?: string) => ['time-entries', projectId ?? 'all'] as const,
   deliverables: (projectId: string) => ['deliverables', projectId] as const,
   analytics: (year: number) => ['analytics', year] as const,
-  calendar: ['calendar-activities'] as const,
+  calendar: (month: string) => ['calendar-activities', month] as const,
 };

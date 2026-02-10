@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/vue-query';
+import { computed } from 'vue';
+import type { Ref } from 'vue';
 import api from '../services/api';
 import type { ActivityEvent } from '../types/activity';
 import type { TimeEntry } from '../types/time';
 import { queryKeys } from './queryKeys';
 
-export const useCalendarActivitiesQuery = () => {
+export const useCalendarActivitiesQuery = (month: Ref<string>) => {
   return useQuery({
-    queryKey: queryKeys.calendar,
+    queryKey: computed(() => queryKeys.calendar(month.value)),
     queryFn: async (): Promise<ActivityEvent[]> => {
       const [{ data: entriesData }, { data: projectsData }] = await Promise.all([
-        api.get<{ data: TimeEntry[] }>('/time-entries', {
-          params: { page: 1, limit: 100 },
+        api.get<TimeEntry[]>('/time-entries/by-month', {
+          params: { month: month.value },
         }),
         api.get<{ data: { id: string; name: string }[] }>('/projects', {
           params: { page: 1, limit: 100 },
@@ -19,7 +21,7 @@ export const useCalendarActivitiesQuery = () => {
 
       const projectsMap = new Map(projectsData.data.map((p) => [p.id, p.name]));
 
-      return entriesData.data.map((entry) => ({
+      return entriesData.map((entry) => ({
         id: entry.id,
         date: entry.date,
         title: entry.description || 'Sin descripcion',

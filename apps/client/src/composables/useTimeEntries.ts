@@ -31,7 +31,7 @@ export const useCreateTimeEntryMutation = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.timeEntries(variables.projectId),
       });
-      queryClient.invalidateQueries({ queryKey: queryKeys.calendar });
+      queryClient.invalidateQueries({ queryKey: ['calendar-activities'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });

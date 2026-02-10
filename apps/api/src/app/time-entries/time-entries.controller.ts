@@ -1,21 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
+import { QueryTimeEntriesMonthDto } from './dto/query-time-entries-month.dto';
 import { QueryTimeEntriesDto } from './dto/query-time-entries.dto';
 import { TimeEntryResponseDto } from './dto/time-entry-response.dto';
 import { TimeEntriesService } from './time-entries.service';
@@ -49,6 +36,18 @@ export class TimeEntriesController {
       ),
       meta: result.meta,
     };
+  }
+
+  @Get('by-month')
+  @ApiOperation({ summary: 'List time entries by month (no pagination)' })
+  @ApiResponse({ status: 200, type: TimeEntryResponseDto, isArray: true })
+  async findByMonth(@Query() query: QueryTimeEntriesMonthDto) {
+    const entries = await this.timeEntriesService.findByMonth(query.month);
+    return entries.map((entry) =>
+      plainToInstance(TimeEntryResponseDto, entry, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
   @Get(':id')

@@ -8,20 +8,22 @@ import {
 } from '@tabler/icons-vue';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useCalendarStore } from '../../stores/calendar';
-import api, { getApiErrorMessage } from '../../services/api';
-import type { ActivityEvent } from '../../types/activity';
-import type { TimeEntry } from '../../types/time';
+import { useCalendarActivitiesQuery } from '../../composables/useCalendarActivities';
+import { useAlertOnError } from '../../composables/useAlertOnError';
 import CalendarDayView from './calendar/CalendarDayView.vue';
 import CalendarMonthView from './calendar/CalendarMonthView.vue';
 import CalendarWeekView from './calendar/CalendarWeekView.vue';
-import Swal from 'sweetalert2';
 
 dayjs.locale('es');
 
 const store = useCalendarStore();
-const activities = ref<ActivityEvent[]>([]);
+const monthKey = computed(() => store.currentDate.format('YYYY-MM'));
+const { data: activitiesData, error, refetch, isFetching } = useCalendarActivitiesQuery(monthKey);
+useAlertOnError(error);
+
+const activities = computed(() => activitiesData.value ?? []);
 
 // Use store date for display
 const currentPeriodName = computed(() => {
@@ -38,54 +40,18 @@ const currentPeriodName = computed(() => {
   return store.currentDate.format('MMMM YYYY');
 });
 
-// Fetch activities from database
-const fetchActivities = async () => {
-  try {
-    const [{ data: entriesData }, { data: projectsData }] = await Promise.all([
-      api.get<{ data: TimeEntry[] }>('/time-entries', {
-        params: { page: 1, limit: 100 },
-      }),
-      api.get<{ data: { id: string; name: string }[] }>('/projects', {
-        params: { page: 1, limit: 100 },
-      }),
-    ]);
-
-    const projectsMap = new Map(projectsData.data.map((p) => [p.id, p.name]));
-
-    activities.value = entriesData.data.map((entry) => ({
-      id: entry.id,
-      date: entry.date,
-      title: entry.description || 'Sin descripcion',
-      type: entry.activity_type || 'work',
-      projectId: entry.project_id,
-      projectName: projectsMap.get(entry.project_id),
-      description: entry.description,
-      duration: `${(entry.duration / 3600).toFixed(1).replace(/\.0$/, '')} horas`,
-    }));
-  } catch (error) {
-    console.error('Error fetching activities:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: getApiErrorMessage(error),
-    });
-  }
-};
-
-onMounted(() => {
-  fetchActivities();
-});
-
 defineExpose({
-  fetchActivities,
+  fetchActivities: () => {
+    if (!isFetching.value) {
+      void refetch();
+    }
+  },
 });
 </script>
 
 <template>
   <div class="p-6 bg-white rounded-lg shadow">
-    <div
-      class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between"
-    >
+    <div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex items-center gap-4">
         <h3 class="text-lg font-bold text-gray-900 capitalize min-w-[200px]">
           {{ currentPeriodName }}
