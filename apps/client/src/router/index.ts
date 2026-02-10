@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import { useAuthStore } from '../stores/auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +7,66 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
+      meta: { requiresAuth: true, layout: 'MainLayout' },
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/projects',
+      name: 'projects',
+      component: () => import('../views/ProjectsView.vue'),
+      meta: { requiresAuth: true, layout: 'MainLayout' },
+    },
+    {
+      path: '/projects/:id',
+      name: 'project-detail',
+      component: () => import('../views/ProjectDetailView.vue'),
+      meta: { requiresAuth: true, layout: 'MainLayout' },
+    },
+    {
+      path: '/analytics',
+      name: 'analytics',
+      component: () => import('../views/AnalyticsView.vue'),
+      meta: { requiresAuth: true, layout: 'MainLayout' },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/setup',
+      name: 'setup',
+      component: () => import('../views/SetupView.vue'),
+      meta: { requiresAuth: false },
     },
   ],
+});
+
+router.beforeEach(async (to) => {
+  const authStore = useAuthStore();
+
+  if (!authStore.initialized) {
+    await authStore.initialize();
+  }
+
+  if (authStore.needsSetup && to.path !== '/setup') {
+    return { path: '/setup' };
+  }
+
+  if (to.path === '/setup' && authStore.needsSetup === false) {
+    return { path: '/login' };
+  }
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return { path: '/login' };
+  }
+
+  if (to.path === '/login' && authStore.isAuthenticated) {
+    return { path: '/' };
+  }
+
+  return true;
 });
 
 export default router;
