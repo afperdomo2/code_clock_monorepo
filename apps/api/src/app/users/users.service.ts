@@ -12,15 +12,15 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { password, ...rest } = createUserDto;
-    const password_hash = await bcrypt.hash(password, 10);
-
+    const data = await this.buildUserCreateData(createUserDto, false);
     return this.prisma.user.create({
-      data: {
-        ...rest,
-        password_hash,
-      },
+      data,
     }) as unknown as Promise<User>;
+  }
+
+  async createInitialAdmin(createUserDto: CreateUserDto): Promise<User> {
+    const data = await this.buildUserCreateData(createUserDto, true);
+    return this.prisma.user.create({ data }) as unknown as Promise<User>;
   }
 
   async findAll(query: QueryUsersDto) {
@@ -95,11 +95,7 @@ export class UsersService {
     }) as unknown as Promise<User>;
   }
 
-  async updateRefreshToken(
-    id: string,
-    refresh_token_hash: string,
-    refresh_token_expires_at: Date,
-  ) {
+  async updateRefreshToken(id: string, refresh_token_hash: string, refresh_token_expires_at: Date) {
     return this.prisma.user.update({
       where: { id },
       data: { refresh_token_hash, refresh_token_expires_at },
@@ -127,5 +123,18 @@ export class UsersService {
       where: { refresh_token_hash },
       data: { refresh_token_hash: null, refresh_token_expires_at: null },
     });
+  }
+
+  private async buildUserCreateData(
+    createUserDto: CreateUserDto,
+    isAdmin: boolean,
+  ): Promise<Prisma.UserCreateInput> {
+    const { password, ...rest } = createUserDto;
+    const password_hash = await bcrypt.hash(password, 10);
+    return {
+      ...rest,
+      password_hash,
+      is_admin: isAdmin,
+    };
   }
 }

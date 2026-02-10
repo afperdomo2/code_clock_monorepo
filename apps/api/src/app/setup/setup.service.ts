@@ -18,7 +18,7 @@ export class SetupService {
       throw new ConflictException('Setup already completed');
     }
 
-    const user = await this.usersService.create(dto);
+    const user = await this.usersService.createInitialAdmin(dto);
     const { password_hash: _passwordHash, ...safe } = user as {
       password_hash?: string;
     };
