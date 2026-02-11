@@ -3,6 +3,7 @@ import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@
 export type AuthUser = {
   id: string;
   email?: string;
+  isAdmin?: boolean;
 };
 
 export const CurrentUser = createParamDecorator(

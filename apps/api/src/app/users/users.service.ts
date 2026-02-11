@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, User as PrismaUser } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserAdminDto } from './dto/update-user-admin.dto';
 import { User } from './entities/user.entity';
 import { QueryUsersDto } from './dto/query-users.dto';
 import { PaginationMetaDto } from '../common/dto/pagination-meta.dto';
@@ -93,6 +95,50 @@ export class UsersService {
       where: { id },
       data: { password_hash },
     }) as unknown as Promise<User>;
+  }
+
+  async updateProfile(id: string, dto: UpdateUserDto): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        email: dto.email,
+        name: dto.name,
+      },
+    }) as unknown as Promise<User>;
+  }
+
+  async updateByAdmin(id: string, dto: UpdateUserAdminDto): Promise<User> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    if (user.is_admin) {
+      throw new BadRequestException('Admin users cannot be modified');
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        email: dto.email ?? undefined,
+        name: dto.name ?? undefined,
+      },
+    }) as unknown as Promise<User>;
+  }
+
+  async removeByAdmin(id: string): Promise<User> {
+    const user = await this.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    if (user.is_admin) {
+      throw new BadRequestException('Admin users cannot be deleted');
+    }
+
+    return this.prisma.user.delete({ where: { id } }) as unknown as Promise<User>;
   }
 
   async updateRefreshToken(id: string, refresh_token_hash: string, refresh_token_expires_at: Date) {

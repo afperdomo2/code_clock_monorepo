@@ -29,7 +29,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, is_admin: user.is_admin };
     const access_token = await this.jwtService.signAsync(payload);
 
     const refresh_token = randomUUID();
@@ -43,6 +43,7 @@ export class AuthService {
 
     return {
       access_token,
+      is_admin: user.is_admin,
       refresh_token,
       token_type: 'Bearer',
       expires_in: ACCESS_TOKEN_TTL_SECONDS,
@@ -51,15 +52,13 @@ export class AuthService {
 
   async refresh(refresh_token: string) {
     const refresh_token_hash = this.hashRefreshToken(refresh_token);
-    const user = await this.usersService.findByRefreshTokenHash(
-      refresh_token_hash,
-    );
+    const user = await this.usersService.findByRefreshTokenHash(refresh_token_hash);
 
     if (!user) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, is_admin: user.is_admin };
     const access_token = await this.jwtService.signAsync(payload);
 
     const new_refresh_token = randomUUID();
@@ -73,6 +72,7 @@ export class AuthService {
 
     return {
       access_token,
+      is_admin: user.is_admin,
       refresh_token: new_refresh_token,
       token_type: 'Bearer',
       expires_in: ACCESS_TOKEN_TTL_SECONDS,
@@ -96,10 +96,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const isValid = await bcrypt.compare(
-      dto.current_password,
-      user.password_hash,
-    );
+    const isValid = await bcrypt.compare(dto.current_password, user.password_hash);
 
     if (!isValid) {
       throw new UnauthorizedException('Invalid credentials');

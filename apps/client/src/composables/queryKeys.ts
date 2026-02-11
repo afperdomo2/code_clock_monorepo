@@ -6,4 +6,6 @@ export const queryKeys = {
   deliverables: (projectId: string) => ['deliverables', projectId] as const,
   analytics: (year: number) => ['analytics', year] as const,
   calendar: (month: string) => ['calendar-activities', month] as const,
+  usersRoot: ['users'] as const,
+  users: (search = '') => ['users', search] as const,
 };

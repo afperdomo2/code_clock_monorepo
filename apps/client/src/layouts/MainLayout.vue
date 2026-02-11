@@ -10,6 +10,8 @@ import {
   IconUser,
   IconBriefcase,
   IconChartBar,
+  IconSettings,
+  IconUsers,
 } from '@tabler/icons-vue';
 
 const authStore = useAuthStore();
@@ -81,6 +83,15 @@ const handleLogout = async () => {
             <IconChartBar class="mr-3 h-5 w-5" />
             <span class="font-medium">Analíticas</span>
           </RouterLink>
+          <RouterLink
+            v-if="authStore.isAdminUser"
+            to="/users"
+            class="flex items-center rounded-lg px-4 py-3 text-gray-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+            active-class="bg-indigo-50 text-indigo-600"
+          >
+            <IconUsers class="mr-3 h-5 w-5" />
+            <span class="font-medium">Usuarios</span>
+          </RouterLink>
         </nav>
 
         <!-- User Profile & Logout -->
@@ -100,13 +111,22 @@ const handleLogout = async () => {
               </p>
             </div>
           </div>
-          <button
-            class="flex w-full items-center justify-center rounded-lg border border-transparent bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
-            @click="handleLogout"
-          >
-            <IconLogout class="mr-2 h-4 w-4" />
-            Cerrar Sesión
-          </button>
+          <div class="space-y-2">
+            <RouterLink
+              to="/profile"
+              class="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
+            >
+              <IconSettings class="mr-2 h-4 w-4" />
+              Perfil
+            </RouterLink>
+            <button
+              class="flex w-full items-center justify-center rounded-lg border border-transparent bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+              @click="handleLogout"
+            >
+              <IconLogout class="mr-2 h-4 w-4" />
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
       </div>
     </aside>
@@ -114,9 +134,7 @@ const handleLogout = async () => {
     <!-- Main Content -->
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Mobile Header -->
-      <header
-        class="flex h-16 items-center justify-between bg-white px-6 shadow-sm lg:hidden"
-      >
+      <header class="flex h-16 items-center justify-between bg-white px-6 shadow-sm lg:hidden">
         <span class="text-xl font-bold text-indigo-600">Code Clock</span>
         <button
           class="rounded-md p-2 text-gray-600 hover:bg-gray-100 focus:outline-none cursor-pointer"

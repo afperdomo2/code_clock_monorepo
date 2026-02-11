@@ -14,6 +14,7 @@ export const getApiErrorMessage = (error: unknown): string => {
       | { message?: string | string[]; error?: string }
       | undefined;
     const message = payload?.message;
+    const status = error.response?.status;
     if (Array.isArray(message)) {
       return message[0] ?? 'Ocurrio un error inesperado.';
     }
@@ -22,6 +23,9 @@ export const getApiErrorMessage = (error: unknown): string => {
     }
     if (payload?.error) {
       return payload.error;
+    }
+    if (status === 403) {
+      return 'No tienes permisos para realizar esta accion.';
     }
   }
 
@@ -59,11 +63,7 @@ api.interceptors.response.use(
     const originalRequest = error.config as
       | (typeof error.config & { _retry?: boolean })
       | undefined;
-    if (
-      error?.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry
-    ) {
+    if (error?.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
