@@ -25,7 +25,7 @@ export class DeliverablesController {
   constructor(private readonly deliverablesService: DeliverablesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a deliverable for the authenticated user' })
+  @ApiOperation({ summary: 'Crear un entregable para el usuario autenticado' })
   @ApiResponse({ status: 201, type: DeliverableResponseDto })
   async create(@CurrentUser('id') userId: string, @Body() dto: CreateDeliverableDto) {
     const deliverable = await this.deliverablesService.create(dto, userId);
@@ -35,7 +35,7 @@ export class DeliverablesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List deliverables for the authenticated user' })
+  @ApiOperation({ summary: 'Listar entregables del usuario autenticado' })
   @ApiResponse({ status: 200 })
   async findAll(@CurrentUser('id') userId: string, @Query() query: QueryDeliverablesDto) {
     const result = await this.deliverablesService.findAll(query, userId);
@@ -50,9 +50,9 @@ export class DeliverablesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get deliverable by id (owned by the authenticated user)' })
+  @ApiOperation({ summary: 'Obtener entregable por ID (del usuario autenticado)' })
   @ApiResponse({ status: 200, type: DeliverableResponseDto })
-  @ApiResponse({ status: 404, description: 'Deliverable not found' })
+  @ApiResponse({ status: 404, description: 'Entregable no encontrado' })
   async findOne(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const deliverable = await this.deliverablesService.findOne(id, userId);
     return plainToInstance(DeliverableResponseDto, deliverable, {
@@ -61,7 +61,7 @@ export class DeliverablesController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update deliverable (owner only)' })
+  @ApiOperation({ summary: 'Actualizar entregable (solo propietario)' })
   @ApiResponse({ status: 200, type: DeliverableResponseDto })
   async update(
     @CurrentUser('id') userId: string,
@@ -75,7 +75,7 @@ export class DeliverablesController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete deliverable (owner only)' })
+  @ApiOperation({ summary: 'Eliminar entregable (solo propietario)' })
   @ApiResponse({ status: 200, type: DeliverableResponseDto })
   async remove(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const deliverable = await this.deliverablesService.remove(id, userId);

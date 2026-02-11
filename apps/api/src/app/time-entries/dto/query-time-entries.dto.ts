@@ -8,12 +8,12 @@ export class QueryTimeEntriesDto extends PaginationQueryDto {
   @IsUUID('4')
   project_id?: string;
 
-  @ApiPropertyOptional({ description: 'ISO date string (from)' })
+  @ApiPropertyOptional({ description: 'Cadena de fecha ISO (desde)' })
   @IsOptional()
   @IsDateString()
   from?: string;
 
-  @ApiPropertyOptional({ description: 'ISO date string (to)' })
+  @ApiPropertyOptional({ description: 'Cadena de fecha ISO (hasta)' })
   @IsOptional()
   @IsDateString()
   to?: string;

@@ -13,7 +13,7 @@ export class SetupController {
   @Get()
   @Public()
   @AllowFirstRun()
-  @ApiOperation({ summary: 'Check first-run setup status' })
+  @ApiOperation({ summary: 'Verificar estado de configuración inicial' })
   @ApiResponse({ status: 200 })
   status() {
     return this.setupService.status();
@@ -22,7 +22,7 @@ export class SetupController {
   @Post('register')
   @Public()
   @AllowFirstRun()
-  @ApiOperation({ summary: 'Create the first user (one-time)' })
+  @ApiOperation({ summary: 'Crear el primer usuario (una sola vez)' })
   @ApiResponse({ status: 201 })
   register(@Body() dto: CreateUserDto) {
     return this.setupService.register(dto);

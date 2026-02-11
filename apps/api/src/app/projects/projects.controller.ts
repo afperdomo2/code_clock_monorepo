@@ -25,7 +25,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a project for the authenticated user' })
+  @ApiOperation({ summary: 'Crear un proyecto para el usuario autenticado' })
   @ApiResponse({ status: 201, type: ProjectResponseDto })
   async create(@CurrentUser('id') userId: string, @Body() dto: CreateProjectDto) {
     const project = await this.projectsService.create(dto, userId);
@@ -35,7 +35,7 @@ export class ProjectsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List projects for the authenticated user' })
+  @ApiOperation({ summary: 'Listar proyectos del usuario autenticado' })
   @ApiResponse({ status: 200 })
   async findAll(@CurrentUser('id') userId: string, @Query() query: QueryProjectsDto) {
     const result = await this.projectsService.findAll(query, userId);
@@ -50,9 +50,9 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get project by id (owned by the authenticated user)' })
+  @ApiOperation({ summary: 'Obtener proyecto por ID (del usuario autenticado)' })
   @ApiResponse({ status: 200, type: ProjectResponseDto })
-  @ApiResponse({ status: 404, description: 'Project not found' })
+  @ApiResponse({ status: 404, description: 'Proyecto no encontrado' })
   async findOne(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const project = await this.projectsService.findOne(id, userId);
     return plainToInstance(ProjectResponseDto, project, {
@@ -61,7 +61,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update project (owner only)' })
+  @ApiOperation({ summary: 'Actualizar proyecto (solo propietario)' })
   @ApiResponse({ status: 200, type: ProjectResponseDto })
   async update(
     @CurrentUser('id') userId: string,
@@ -75,7 +75,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete project (owner only)' })
+  @ApiOperation({ summary: 'Eliminar proyecto (solo propietario)' })
   @ApiResponse({ status: 200, type: ProjectResponseDto })
   async remove(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const project = await this.projectsService.remove(id, userId);

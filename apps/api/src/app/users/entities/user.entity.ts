@@ -3,33 +3,33 @@ import { Expose } from 'class-transformer';
 
 export class User {
   @ApiProperty({
-    description: 'The unique identifier of the user',
+    description: 'El identificador único del usuario',
     format: 'uuid',
   })
   @Expose()
   id!: string;
 
   @ApiProperty({
-    description: 'The email of the user',
+    description: 'El correo electrónico del usuario',
     example: 'user@example.com',
   })
   @Expose()
   email!: string;
 
-  @ApiProperty({ description: 'The name of the user', required: false })
+  @ApiProperty({ description: 'El nombre del usuario', required: false })
   @Expose()
   name?: string;
 
-  @ApiProperty({ description: 'Whether the user is an admin' })
+  @ApiProperty({ description: 'Si el usuario es administrador' })
   @Expose({ name: 'is_admin' })
   isAdmin!: boolean;
 
-  @ApiProperty({ description: 'The date when the user was created' })
+  @ApiProperty({ description: 'La fecha en que se creó el usuario' })
   @Expose({ name: 'created_at' })
   createdAt!: Date;
 
   @ApiProperty({
-    description: 'The date when the user was last updated',
+    description: 'La fecha de la última actualización del usuario',
     required: false,
   })
   @Expose({ name: 'updated_at' })

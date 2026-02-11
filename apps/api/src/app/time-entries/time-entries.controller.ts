@@ -15,7 +15,7 @@ export class TimeEntriesController {
   constructor(private readonly timeEntriesService: TimeEntriesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create time entry for the authenticated user' })
+  @ApiOperation({ summary: 'Crear entrada de tiempo para el usuario autenticado' })
   @ApiResponse({ status: 201, type: TimeEntryResponseDto })
   async create(@CurrentUser('id') userId: string, @Body() dto: CreateTimeEntryDto) {
     const entry = await this.timeEntriesService.create(dto, userId);
@@ -25,7 +25,7 @@ export class TimeEntriesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List time entries for the authenticated user' })
+  @ApiOperation({ summary: 'Listar entradas de tiempo del usuario autenticado' })
   @ApiResponse({ status: 200 })
   async findAll(@CurrentUser('id') userId: string, @Query() query: QueryTimeEntriesDto) {
     const result = await this.timeEntriesService.findAll(query, userId);
@@ -41,7 +41,7 @@ export class TimeEntriesController {
 
   @Get('by-month')
   @ApiOperation({
-    summary: 'List time entries by month for the authenticated user (no pagination)',
+    summary: 'Listar entradas de tiempo por mes del usuario autenticado (sin paginación)',
   })
   @ApiResponse({ status: 200, type: TimeEntryResponseDto, isArray: true })
   async findByMonth(@CurrentUser('id') userId: string, @Query() query: QueryTimeEntriesMonthDto) {
@@ -54,9 +54,9 @@ export class TimeEntriesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get time entry by id (owned by the authenticated user)' })
+  @ApiOperation({ summary: 'Obtener entrada de tiempo por ID (del usuario autenticado)' })
   @ApiResponse({ status: 200, type: TimeEntryResponseDto })
-  @ApiResponse({ status: 404, description: 'Time entry not found' })
+  @ApiResponse({ status: 404, description: 'Entrada de tiempo no encontrada' })
   async findOne(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const entry = await this.timeEntriesService.findOne(id, userId);
     return plainToInstance(TimeEntryResponseDto, entry, {
@@ -65,7 +65,7 @@ export class TimeEntriesController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete time entry (owner only)' })
+  @ApiOperation({ summary: 'Eliminar entrada de tiempo (solo propietario)' })
   @ApiResponse({ status: 200, type: TimeEntryResponseDto })
   async remove(@CurrentUser('id') userId: string, @Param('id', ParseUUIDPipe) id: string) {
     const entry = await this.timeEntriesService.remove(id, userId);

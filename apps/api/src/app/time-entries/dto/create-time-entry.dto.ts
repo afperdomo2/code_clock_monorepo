@@ -30,7 +30,7 @@ export class CreateTimeEntryDto {
   @IsDateString()
   date!: string;
 
-  @ApiProperty({ description: 'Duration in seconds' })
+  @ApiProperty({ description: 'Duración en segundos' })
   @IsInt()
   @Min(1)
   duration!: number;

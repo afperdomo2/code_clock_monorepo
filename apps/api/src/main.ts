@@ -3,11 +3,7 @@
  * This is only a minimal backend to get started.
  */
 
-import {
-  ClassSerializerInterceptor,
-  Logger,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -38,13 +34,11 @@ async function bootstrap() {
   );
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalFilters(
-    new HttpExceptionFilter(new Logger('HttpExceptionFilter')),
-  );
+  app.useGlobalFilters(new HttpExceptionFilter(new Logger('HttpExceptionFilter')));
 
   const config = new DocumentBuilder()
-    .setTitle('Code Clock API')
-    .setDescription('The Code Clock API description')
+    .setTitle('API de Code Clock')
+    .setDescription('Documentación de la API de Code Clock')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -62,12 +56,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
-  );
-  Logger.log(
-    `📚 Swagger documentation is available on: http://localhost:${port}/api/docs`,
-  );
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
+  Logger.log(`📚 Swagger documentation is available on: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

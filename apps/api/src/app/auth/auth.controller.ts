@@ -1,19 +1,6 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Request, Response, type CookieOptions } from 'express';
 import { AuthService } from './auth.service';
@@ -45,7 +32,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @Throttle({ short: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Login' })
+  @ApiOperation({ summary: 'Iniciar sesión' })
   @ApiResponse({ status: 200 })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { refresh_token, ...payload } = await this.authService.login(dto);
@@ -55,19 +42,14 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
-  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOperation({ summary: 'Renovar token de acceso' })
   @ApiResponse({ status: 200 })
-  async refresh(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.refresh_token;
     if (!refreshToken) {
       throw new UnauthorizedException('Missing refresh token');
     }
-    const { refresh_token, ...payload } = await this.authService.refresh(
-      refreshToken,
-    );
+    const { refresh_token, ...payload } = await this.authService.refresh(refreshToken);
     res.cookie('refresh_token', refresh_token, this.getRefreshCookieOptions());
     return payload;
   }
@@ -76,19 +58,16 @@ export class AuthController {
   @Post('change-password')
   @Throttle({ short: { limit: 5, ttl: 60_000 } })
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Change password' })
+  @ApiOperation({ summary: 'Cambiar contraseña' })
   @ApiResponse({ status: 200 })
-  changePassword(
-    @Req() req: Request & { user?: { id: string } },
-    @Body() dto: ChangePasswordDto,
-  ) {
+  changePassword(@Req() req: Request & { user?: { id: string } }, @Body() dto: ChangePasswordDto) {
     const user = req.user as { id: string };
     return this.authService.changePassword(user.id, dto);
   }
 
   @Public()
   @Post('logout')
-  @ApiOperation({ summary: 'Logout (client-side token discard)' })
+  @ApiOperation({ summary: 'Cerrar sesión (descartar token del cliente)' })
   @ApiResponse({ status: 200 })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.refresh_token ?? null;

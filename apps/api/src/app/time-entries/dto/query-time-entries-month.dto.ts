@@ -3,12 +3,12 @@ import { IsString, Matches } from 'class-validator';
 
 export class QueryTimeEntriesMonthDto {
   @ApiProperty({
-    description: 'Month in YYYY-MM or MM-YYYY format',
+    description: 'Mes en formato YYYY-MM o MM-YYYY',
     example: '2026-08',
   })
   @IsString()
   @Matches(/^(\d{4}-\d{2}|\d{2}-\d{4})$/, {
-    message: 'month must be in YYYY-MM or MM-YYYY format',
+    message: 'el mes debe estar en formato YYYY-MM o MM-YYYY',
   })
   month!: string;
 }
