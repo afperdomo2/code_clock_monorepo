@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import Swal from 'sweetalert2';
 import { computed, ref } from 'vue';
-import api, { getApiErrorMessage, setAccessToken } from '../services/api';
+import api, { getApiErrorMessage, isThrottledError, setAccessToken } from '../services/api';
 import type { UserProfile } from '../types';
 
 type RegisterPayload = {
@@ -41,8 +41,10 @@ export const useAuthStore = defineStore('auth', () => {
           isAdmin.value = refresh.data.is_admin;
           localStorage.setItem('isAdmin', String(refresh.data.is_admin));
           await fetchProfile();
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (refreshError) {
+          if (isThrottledError(refreshError)) {
+            return;
+          }
           setAccessToken(null);
           accessToken.value = null;
           isAdmin.value = null;

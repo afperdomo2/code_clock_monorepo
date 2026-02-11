@@ -15,8 +15,8 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([
-      { name: 'short', ttl: 60_000, limit: 10 },
-      { name: 'medium', ttl: 600_000, limit: 100 },
+      { name: 'short', ttl: 60_000, limit: 30 },
+      { name: 'medium', ttl: 900_000, limit: 500 },
     ]),
     UsersModule,
     ProjectsModule,

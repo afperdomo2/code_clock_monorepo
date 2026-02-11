@@ -8,6 +8,9 @@ export const setAccessToken = (token: string | null) => {
 
 export const getAccessToken = () => accessToken;
 
+export const isThrottledError = (error: unknown): boolean =>
+  axios.isAxiosError(error) && error.response?.status === 429;
+
 export const getApiErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const payload = error.response?.data as
@@ -26,6 +29,9 @@ export const getApiErrorMessage = (error: unknown): string => {
     }
     if (status === 403) {
       return 'No tienes permisos para realizar esta accion.';
+    }
+    if (status === 429) {
+      return 'Demasiadas solicitudes. Espera un momento e intenta de nuevo.';
     }
   }
 
@@ -82,7 +88,9 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        setAccessToken(null);
+        if (!isThrottledError(refreshError)) {
+          setAccessToken(null);
+        }
         if (refreshError instanceof Error) {
           refreshError.message = getApiErrorMessage(refreshError);
         }

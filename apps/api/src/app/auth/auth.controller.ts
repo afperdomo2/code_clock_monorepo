@@ -31,7 +31,7 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @Throttle({ short: { limit: 5, ttl: 60_000 } })
+  @Throttle({ short: { limit: 10, ttl: 60_000 } })
   @ApiOperation({ summary: 'Iniciar sesión' })
   @ApiResponse({ status: 200 })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
@@ -42,6 +42,7 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
+  @Throttle({ short: { limit: 30, ttl: 60_000 } })
   @ApiOperation({ summary: 'Renovar token de acceso' })
   @ApiResponse({ status: 200 })
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -56,7 +57,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
-  @Throttle({ short: { limit: 5, ttl: 60_000 } })
+  @Throttle({ short: { limit: 10, ttl: 60_000 } })
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Cambiar contraseña' })
   @ApiResponse({ status: 200 })
