@@ -20,6 +20,7 @@ import { computed, provide, ref } from 'vue';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import { useRoute, useRouter } from 'vue-router';
 import ActivityDetailModal from '../components/dashboard/ActivityDetailModal.vue';
+import SectionLayout from '../components/layouts/SectionLayout.vue';
 import ProjectCreateModal from '../components/projects/ProjectCreateModal.vue';
 import TimeEntryModal from '../components/time/TimeEntryModal.vue';
 import { useAlertOnError } from '../composables/useAlertOnError';
@@ -318,97 +319,95 @@ const openActivityModal = (event: TimelineEvent) => {
     </button>
 
     <!-- Header -->
-    <div
-      v-if="project"
-      class="p-6 bg-white rounded-lg shadow"
-    >
-      <div class="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-        <div>
-          <div class="flex items-center gap-3">
-            <h2 class="text-2xl font-bold text-gray-900">
-              {{ project.name }}
-            </h2>
-            <span
-              class="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
-            >
-              {{ PROJECT_STATUS_LABELS[project.status] ?? project.status }}
-            </span>
-          </div>
-          <p class="mt-1 text-gray-500">
-            {{ project.client }}
-          </p>
-          <p
-            v-if="project.description"
-            class="max-w-2xl mt-4 text-gray-600"
-          >
-            {{ project.description }}
-          </p>
-        </div>
-        <div class="flex gap-2">
-          <button
-            class="flex items-center justify-center px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
-            @click="isEditModalOpen = true"
-          >
-            <IconEdit class="w-5 h-5 mr-2" />
-            Editar
-          </button>
-          <button
-            class="flex items-center justify-center px-4 py-2 text-white transition-all bg-red-600 rounded-lg shadow-sm cursor-pointer hover:bg-red-700"
-            @click="handleDeleteProject"
-          >
-            <IconTrash class="w-5 h-5 mr-2" />
-            Eliminar
-          </button>
-          <button
-            class="flex items-center justify-center px-4 py-2 text-white transition-all bg-indigo-600 rounded-lg shadow-lg cursor-pointer hover:bg-indigo-700 hover:shadow-xl"
-            @click="isTimeModalOpen = true"
-          >
-            <IconPlayerPlay class="w-5 h-5 mr-2" />
-            Registrar Actividad
-          </button>
-        </div>
-      </div>
+    <div v-if="project">
+      <div class="max-w-5xl p-6 mx-auto bg-white rounded-lg shadow">
+        <SectionLayout>
+          <template #title>
+            <div>
+              <div class="flex items-center gap-3">
+                <h2 class="text-2xl font-bold text-gray-900">
+                  {{ project.name }}
+                </h2>
+                <span
+                  class="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
+                >
+                  {{ PROJECT_STATUS_LABELS[project.status] ?? project.status }}
+                </span>
+              </div>
+              <p class="mt-1 text-gray-500">
+                {{ project.client }}
+              </p>
+              <p
+                v-if="project.description"
+                class="max-w-2xl mt-4 text-gray-600"
+              >
+                {{ project.description }}
+              </p>
+            </div>
+          </template>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-2 gap-4 pt-6 mt-6 border-t sm:grid-cols-4">
-        <div>
-          <p class="text-sm text-gray-500">
-            Horas Totales
-          </p>
-          <p class="text-xl font-semibold text-gray-900">
-            {{ formatHours(project.hours_spent) }}h
-          </p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">
-            Estimadas
-          </p>
-          <p class="text-xl font-semibold text-gray-900">
-            {{ project.hours_estimated ? formatHours(project.hours_estimated) : '-' }}h
-          </p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">
-            Fecha Entrega
-          </p>
-          <p class="text-xl font-semibold text-gray-900">
-            {{ project.deadline ? dayjs(project.deadline).format('DD-MM-YYYY') : '-' }}
-          </p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500">
-            Restante
-          </p>
-          <p class="text-xl font-semibold text-indigo-600">
-            {{
-              project.hours_estimated
-                ? `${formatHours(project.hours_estimated - project.hours_spent)}h`
-                : '-'
-            }}
-          </p>
-        </div>
+          <template #actions>
+            <div class="flex flex-wrap gap-2">
+              <button
+                class="flex items-center justify-center px-4 py-2 text-gray-700 transition-all bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
+                @click="isEditModalOpen = true"
+              >
+                <IconEdit class="w-5 h-5 mr-2" />
+                Editar
+              </button>
+              <button
+                class="flex items-center justify-center px-4 py-2 text-white transition-all bg-red-600 rounded-lg shadow-sm cursor-pointer hover:bg-red-700"
+                @click="handleDeleteProject"
+              >
+                <IconTrash class="w-5 h-5 mr-2" />
+                Eliminar
+              </button>
+              <button
+                class="flex items-center justify-center px-4 py-2 text-white transition-all bg-indigo-600 rounded-lg shadow-lg cursor-pointer hover:bg-indigo-700 hover:shadow-xl"
+                @click="isTimeModalOpen = true"
+              >
+                <IconPlayerPlay class="w-5 h-5 mr-2" />
+                Registrar Actividad
+              </button>
+            </div>
+          </template>
+
+          <template #content>
+            <div class="grid grid-cols-2 gap-4 pt-2 border-t sm:grid-cols-4">
+              <div>
+                <p class="text-sm text-gray-500">Horas Totales</p>
+                <p class="text-xl font-semibold text-gray-900">
+                  {{ formatHours(project.hours_spent) }}h
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Estimadas</p>
+                <p class="text-xl font-semibold text-gray-900">
+                  {{ project.hours_estimated ? formatHours(project.hours_estimated) : '-' }}h
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Fecha Entrega</p>
+                <p class="text-xl font-semibold text-gray-900">
+                  {{ project.deadline ? dayjs(project.deadline).format('DD-MM-YYYY') : '-' }}
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Restante</p>
+                <p class="text-xl font-semibold text-indigo-600">
+                  {{
+                    project.hours_estimated
+                      ? `${formatHours(project.hours_estimated - project.hours_spent)}h`
+                      : '-'
+                  }}
+                </p>
+              </div>
+            </div>
+          </template>
+        </SectionLayout>
       </div>
     </div>
+
     <div
       v-else-if="isLoading"
       class="flex items-center justify-center h-64"
@@ -417,6 +416,7 @@ const openActivityModal = (event: TimelineEvent) => {
         class="w-12 h-12 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"
       />
     </div>
+
     <div
       v-else
       class="flex items-center justify-center h-64 text-gray-500"
@@ -468,9 +468,7 @@ const openActivityModal = (event: TimelineEvent) => {
               v-if="activeTab === 'summary'"
               class="space-y-6"
             >
-              <h3 class="text-lg font-medium text-gray-900">
-                Historial de Sesiones
-              </h3>
+              <h3 class="text-lg font-medium text-gray-900">Historial de Sesiones</h3>
               <div class="flow-root">
                 <ul
                   role="list"
@@ -535,9 +533,7 @@ const openActivityModal = (event: TimelineEvent) => {
                 class="space-y-2"
               >
                 <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-medium text-gray-900">
-                    Progreso de Entregables
-                  </h3>
+                  <h3 class="text-lg font-medium text-gray-900">Progreso de Entregables</h3>
                   <span class="text-sm font-medium text-gray-900">
                     {{ deliverables.filter((d) => d.completed).length }} de
                     {{ deliverables.length }}
@@ -553,9 +549,7 @@ const openActivityModal = (event: TimelineEvent) => {
                     :style="{ width: `${deliverableProgressPercentage}%` }"
                   />
                 </div>
-                <p class="text-sm text-gray-600">
-                  {{ deliverableProgressPercentage }}% completado
-                </p>
+                <p class="text-sm text-gray-600">{{ deliverableProgressPercentage }}% completado</p>
               </div>
 
               <!-- Add Deliverable -->
@@ -566,7 +560,7 @@ const openActivityModal = (event: TimelineEvent) => {
                   placeholder="Nuevo entregable..."
                   class="flex-1 p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   @keyup.enter="addDeliverable"
-                >
+                />
                 <button
                   :disabled="isAddingDeliverable"
                   class="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm cursor-pointer hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -610,7 +604,7 @@ const openActivityModal = (event: TimelineEvent) => {
                       :checked="item.completed"
                       class="w-4 h-4 text-indigo-600 border-gray-300 rounded cursor-pointer focus:ring-indigo-500"
                       @change="toggleDeliverable(item)"
-                    >
+                    />
                     <div
                       v-if="editingDeliverableId !== item.id"
                       class="flex-1 ml-3"
@@ -637,7 +631,7 @@ const openActivityModal = (event: TimelineEvent) => {
                         class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         @keyup.enter="saveEditDeliverable(item)"
                         @keyup.escape="cancelEditDeliverable"
-                      >
+                      />
                     </div>
                   </div>
 

@@ -14,6 +14,7 @@ const props = defineProps<{
 const store = useCalendarStore();
 
 const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+const weekDaysMobile = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 
 const calendarDays = computed(() => {
   const startOfMonth = store.currentDate.startOf('month');
@@ -74,65 +75,80 @@ const handleEventClick = (event: ActivityEvent) => {
 
 <template>
   <div>
-    <div
-      class="grid grid-cols-7 gap-1 text-sm font-medium text-center text-gray-500"
-    >
+    <div>
       <div
-        v-for="day in weekDays"
-        :key="day"
-        class="py-2"
+        class="grid grid-cols-7 gap-0.5 text-xs font-medium text-center text-gray-500 sm:gap-1 sm:text-sm"
       >
-        {{ day }}
+        <div
+          v-for="(day, index) in weekDays"
+          :key="day"
+          class="py-2"
+        >
+          <span class="sm:hidden">{{ weekDaysMobile[index] }}</span>
+          <span class="hidden sm:inline">{{ day }}</span>
+        </div>
       </div>
-    </div>
 
-    <div class="grid grid-cols-7 gap-1">
-      <div
-        v-for="(day, index) in calendarDays"
-        :key="index"
-        :class="[
-          'relative flex min-h-[140px] flex-col items-start justify-start rounded-lg border p-2 transition-colors',
-          day.isCurrentMonth
-            ? 'bg-white text-gray-900'
-            : 'bg-gray-50 text-gray-400',
-          day.isToday ? 'ring-2 ring-indigo-600 ring-inset' : 'border-gray-100',
-        ]"
-      >
-        <span
+      <div class="grid grid-cols-7 gap-0.5 sm:gap-1">
+        <div
+          v-for="(day, index) in calendarDays"
+          :key="index"
           :class="[
-            'text-sm mb-1',
-            day.isToday ? 'font-bold text-indigo-600' : '',
+            'relative flex min-h-20 sm:min-h-30 lg:min-h-35 flex-col items-start justify-start rounded-md sm:rounded-lg border p-1 sm:p-2 transition-colors',
+            day.isCurrentMonth
+              ? 'bg-white text-gray-900'
+              : 'bg-gray-50 text-gray-400',
+            day.isToday ? 'ring-2 ring-indigo-600 ring-inset' : 'border-gray-100',
           ]"
         >
-          {{ day.date.date() }}
-        </span>
-
-        <!-- Events -->
-        <div class="w-full space-y-1">
-          <button
-            v-for="(event, eIdx) in getEventsForDay(day.date)"
-            :key="eIdx"
+          <span
             :class="[
-              'block w-full text-left rounded px-1.5 py-1 text-xs cursor-pointer hover:opacity-80 border transition-shadow hover:shadow-sm',
-              getProjectColor(event.projectName),
+              'mb-1 text-[11px] sm:text-sm',
+              day.isToday ? 'font-bold text-indigo-600' : '',
             ]"
-            :title="`${event.projectName || 'Sin proyecto'} - ${event.title}`"
-            @click.stop="handleEventClick(event)"
           >
-            <div class="flex items-center gap-1 font-bold truncate">
-              <component
-                :is="getActivityConfig(event.type).icon"
-                class="w-3 h-3"
-              />
-              {{ event.projectName || 'Sin proyecto' }}
-            </div>
-            <div
-              class="flex justify-between items-center text-[10px] opacity-90 pl-4"
+            {{ day.date.date() }}
+          </span>
+
+          <div class="flex flex-wrap w-full gap-1 sm:hidden">
+            <button
+              v-for="(event, eIdx) in getEventsForDay(day.date)"
+              :key="`dot-${eIdx}`"
+              :class="[
+                'w-1.5 h-1.5 rounded-full border cursor-pointer',
+                getProjectColor(event.projectName),
+              ]"
+              :title="`${event.projectName || 'Sin proyecto'} - ${event.title}`"
+              @click.stop="handleEventClick(event)"
+            />
+          </div>
+
+          <div class="hidden w-full space-y-1 sm:block">
+            <button
+              v-for="(event, eIdx) in getEventsForDay(day.date)"
+              :key="eIdx"
+              :class="[
+                'block w-full text-left rounded px-1 py-0.5 sm:px-1.5 sm:py-1 text-[10px] sm:text-xs cursor-pointer hover:opacity-80 border transition-shadow hover:shadow-sm',
+                getProjectColor(event.projectName),
+              ]"
+              :title="`${event.projectName || 'Sin proyecto'} - ${event.title}`"
+              @click.stop="handleEventClick(event)"
             >
-              <span class="truncate max-w-[60%]">{{ event.type }}</span>
-              <span>{{ event.duration?.replace(' horas', 'h') }}</span>
-            </div>
-          </button>
+              <div class="flex items-center gap-1 font-bold truncate">
+                <component
+                  :is="getActivityConfig(event.type).icon"
+                  class="w-3 h-3"
+                />
+                {{ event.projectName || 'Sin proyecto' }}
+              </div>
+              <div
+                class="flex items-center justify-between opacity-90 text-[10px]"
+              >
+                <span class="truncate max-w-[60%]">{{ event.type }}</span>
+                <span>{{ event.duration?.replace(' horas', 'h') }}</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>

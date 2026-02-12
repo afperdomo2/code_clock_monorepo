@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-vue';
 import Swal from 'sweetalert2';
 import { computed, ref } from 'vue';
+import SectionLayout from '../components/layouts/SectionLayout.vue';
 import UserCreateModal from '../components/users/UserCreateModal.vue';
 import { useAlertOnError } from '../composables/useAlertOnError';
 import { useDeleteUserMutation, useUsersQuery } from '../composables/useUsers';
@@ -91,138 +92,146 @@ const confirmDelete = async (user: UserProfile) => {
 
 <template>
   <div class="space-y-6">
-    <header class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-      <div>
+    <SectionLayout>
+      <template #title>
         <h2 class="text-2xl font-bold text-gray-900">Usuarios</h2>
-        <p class="text-gray-600">Administra usuarios del sistema.</p>
-      </div>
-      <div class="flex gap-3">
-        <button
-          class="flex items-center justify-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
-          :disabled="isFetching"
-          @click="
-            () => {
-              void refetch();
-            }
-          "
-        >
-          <IconRefresh
-            class="w-5 h-5 mr-2"
-            :class="{ 'animate-spin': isFetching }"
-          />
-          Refrescar
-        </button>
-        <button
-          class="flex items-center justify-center px-4 py-2 text-white bg-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-700"
-          @click="openCreate"
-        >
-          <IconPlus class="w-5 h-5 mr-2" />
-          Nuevo usuario
-        </button>
-      </div>
-    </header>
+      </template>
 
-    <div class="flex flex-col gap-4 p-4 bg-white rounded-lg shadow sm:flex-row sm:items-center">
-      <div class="relative flex-1">
-        <IconSearch class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Buscar usuario..."
-          class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        />
-      </div>
-    </div>
-
-    <div
-      v-if="isLoading"
-      class="flex justify-center py-12"
-    >
-      <div
-        class="w-8 h-8 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"
-      />
-    </div>
-
-    <div
-      v-else
-      class="overflow-hidden bg-white rounded-lg shadow"
-    >
-      <table class="w-full text-sm text-left">
-        <thead class="text-xs text-gray-500 uppercase bg-gray-50">
-          <tr>
-            <th class="px-4 py-3">Usuario</th>
-            <th class="px-4 py-3 text-center">Rol</th>
-            <th class="px-4 py-3 text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr
-            v-for="user in users"
-            :key="user.id"
+      <template #actions>
+        <div class="flex-1 min-w-35">
+          <button
+            class="flex items-center justify-center w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
+            :disabled="isFetching"
+            @click="
+              () => {
+                void refetch();
+              }
+            "
           >
-            <td class="px-4 py-3">
-              <p class="font-medium text-gray-900">
-                {{ user.email }}
-              </p>
-              <p
-                v-if="user.name"
-                class="text-xs text-gray-500"
+            <IconRefresh
+              class="w-5 h-5 mr-2"
+              :class="{ 'animate-spin': isFetching }"
+            />
+            Refrescar
+          </button>
+        </div>
+        <div class="flex-1 min-w-50">
+          <button
+            class="flex items-center justify-center w-full px-4 py-2 text-white bg-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-700"
+            @click="openCreate"
+          >
+            <IconPlus class="w-5 h-5 mr-2" />
+            Nuevo usuario
+          </button>
+        </div>
+      </template>
+
+      <template #content>
+        <div
+          class="flex flex-col gap-4 p-4 mb-4 bg-white rounded-lg shadow sm:flex-row sm:items-center"
+        >
+          <div class="relative flex-1">
+            <IconSearch class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+            <input
+              v-model="search"
+              type="text"
+              placeholder="Buscar usuario..."
+              class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+        </div>
+
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-12"
+        >
+          <div
+            class="w-8 h-8 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"
+          />
+        </div>
+
+        <div
+          v-else
+          class="overflow-x-auto bg-white rounded-lg shadow"
+        >
+          <table class="w-full min-w-full text-sm text-left">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-50">
+              <tr>
+                <th class="px-4 py-3">Usuario</th>
+                <th class="px-4 py-3 text-center">Rol</th>
+                <th class="px-4 py-3 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr
+                v-for="user in users"
+                :key="user.id"
               >
-                {{ user.name }}
-              </p>
-            </td>
-            <td class="px-4 py-3 text-center">
-              <span
-                class="px-3 py-1 text-xs font-medium rounded-full"
-                :class="
-                  user.is_admin ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'
-                "
-              >
-                {{ user.is_admin ? 'Administrador' : 'Usuario' }}
-              </span>
-            </td>
-            <td class="px-4 py-3 text-center">
-              <div
-                v-if="user.is_admin"
-                class="flex justify-center"
-              >
-                <IconLock
-                  class="w-5 h-5 text-gray-400"
-                  title="Los usuarios administradores no pueden ser modificados."
-                />
-              </div>
-              <div
-                v-else
-                class="flex justify-center gap-2"
-              >
-                <button
-                  class="flex items-center rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
-                  @click="openEdit(user)"
+                <td class="px-4 py-3">
+                  <p class="font-medium text-gray-900">
+                    {{ user.email }}
+                  </p>
+                  <p
+                    v-if="user.name"
+                    class="text-xs text-gray-500"
+                  >
+                    {{ user.name }}
+                  </p>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <span
+                    class="px-3 py-1 text-xs font-medium rounded-full"
+                    :class="
+                      user.is_admin ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'
+                    "
+                  >
+                    {{ user.is_admin ? 'Administrador' : 'Usuario' }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <div
+                    v-if="user.is_admin"
+                    class="flex justify-center"
+                  >
+                    <IconLock
+                      class="w-5 h-5 text-gray-400"
+                      title="Los usuarios administradores no pueden ser modificados."
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="flex justify-center gap-2"
+                  >
+                    <button
+                      class="flex items-center rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 cursor-pointer"
+                      @click="openEdit(user)"
+                    >
+                      <IconPencil class="w-4 h-4 mr-1" />
+                      Editar
+                    </button>
+                    <button
+                      class="flex items-center rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 cursor-pointer"
+                      @click="confirmDelete(user)"
+                    >
+                      <IconTrash class="w-4 h-4 mr-1" />
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="users.length === 0">
+                <td
+                  class="px-4 py-6 text-center text-gray-500"
+                  colspan="3"
                 >
-                  <IconPencil class="w-4 h-4 mr-1" />
-                  Editar
-                </button>
-                <button
-                  class="flex items-center rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 cursor-pointer"
-                  @click="confirmDelete(user)"
-                >
-                  <IconTrash class="w-4 h-4 mr-1" />
-                  Eliminar
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="users.length === 0">
-            <td
-              class="px-4 py-6 text-center text-gray-500"
-              colspan="3"
-            >
-              No hay usuarios para mostrar.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                  No hay usuarios para mostrar.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
+    </SectionLayout>
 
     <UserCreateModal
       :is-open="isModalOpen"

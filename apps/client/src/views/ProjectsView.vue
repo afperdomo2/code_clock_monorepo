@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/vue-query';
 import { computed, ref } from 'vue';
 import ProjectCard from '../components/projects/ProjectCard.vue';
 import ProjectCreateModal from '../components/projects/ProjectCreateModal.vue';
+import SectionLayout from '../components/layouts/SectionLayout.vue';
 import { queryKeys } from '../composables/queryKeys';
 import { useAlertOnError } from '../composables/useAlertOnError';
 import { useProjectsQuery } from '../composables/useProjects';
@@ -73,138 +74,135 @@ const closeModal = () => {
 
 <template>
   <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-          Proyectos
-        </h2>
-        <p class="text-gray-600 dark:text-gray-400">
-          Gestiona y monitorea tus proyectos activos
-        </p>
-      </div>
-      <div class="flex gap-3">
-        <button
-          :disabled="isFetching"
-          class="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer"
-          @click="
-            () => {
-              void refetch();
-            }
-          "
-        >
-          <IconRefresh
-            class="mr-2 h-5 w-5"
-            :class="{ 'animate-spin': isFetching }"
-          />
-          Refrescar
-        </button>
-        <button
-          class="flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 cursor-pointer"
-          @click="
-            () => {
-              projectToEdit = undefined;
-              isModalOpen = true;
-            }
-          "
-        >
-          <IconPlus class="mr-2 h-5 w-5" />
-          Nuevo Proyecto
-        </button>
-      </div>
-    </div>
+    <SectionLayout>
+      <template #title>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Proyectos</h2>
+      </template>
 
-    <!-- Filters -->
-    <div class="flex flex-col gap-4 rounded-lg bg-white p-4 shadow sm:flex-row sm:items-center">
-      <div class="relative flex-1">
-        <IconSearch class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Buscar proyecto..."
-          class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        >
-      </div>
-      <div class="flex gap-4">
-        <div class="relative">
-          <select
-            v-model="statusFilter"
-            class="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-4 pr-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+      <template #actions>
+        <div class="flex-1 min-w-35">
+          <button
+            :disabled="isFetching"
+            class="flex items-center justify-center w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            @click="
+              () => {
+                void refetch();
+              }
+            "
           >
-            <option value="Todos">
-              Todos
-            </option>
-            <option value="Solo Activos">
-              Solo Activos
-            </option>
-            <option
-              v-for="status in PROJECT_STATUS_OPTIONS"
-              :key="status.value"
-              :value="status.value"
-            >
-              {{ status.label }}
-            </option>
-          </select>
-          <IconFilter
-            class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+            <IconRefresh
+              class="w-5 h-5 mr-2"
+              :class="{ 'animate-spin': isFetching }"
+            />
+            Refrescar
+          </button>
+        </div>
+        <div class="flex-1 min-w-50">
+          <button
+            class="flex items-center justify-center w-full px-4 py-2 text-white bg-indigo-600 rounded-lg cursor-pointer hover:bg-indigo-700"
+            @click="
+              () => {
+                projectToEdit = undefined;
+                isModalOpen = true;
+              }
+            "
+          >
+            <IconPlus class="w-5 h-5 mr-2" />
+            Nuevo Proyecto
+          </button>
+        </div>
+      </template>
+
+      <template #content>
+        <!-- Filters -->
+        <div
+          class="flex flex-col gap-4 p-4 mb-4 bg-white rounded-lg shadow sm:flex-row sm:items-center"
+        >
+          <div class="relative flex-1">
+            <IconSearch class="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Buscar proyecto..."
+              class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div class="flex gap-4">
+            <div class="relative">
+              <select
+                v-model="statusFilter"
+                class="py-2 pl-4 pr-10 bg-white border border-gray-300 rounded-lg appearance-none cursor-pointer focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              >
+                <option value="Todos">Todos</option>
+                <option value="Solo Activos">Solo Activos</option>
+                <option
+                  v-for="status in PROJECT_STATUS_OPTIONS"
+                  :key="status.value"
+                  :value="status.value"
+                >
+                  {{ status.label }}
+                </option>
+              </select>
+              <IconFilter
+                class="absolute w-4 h-4 text-gray-400 -translate-y-1/2 pointer-events-none right-3 top-1/2"
+              />
+            </div>
+            <div class="relative">
+              <select
+                v-model="clientFilter"
+                class="py-2 pl-4 pr-10 bg-white border border-gray-300 rounded-lg appearance-none cursor-pointer focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              >
+                <option
+                  v-for="client in clients"
+                  :key="client"
+                >
+                  {{ client }}
+                </option>
+              </select>
+              <IconFilter
+                class="absolute w-4 h-4 text-gray-400 -translate-y-1/2 pointer-events-none right-3 top-1/2"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-12"
+        >
+          <div
+            class="w-8 h-8 border-4 border-indigo-600 rounded-full animate-spin border-t-transparent"
           />
         </div>
-        <div class="relative">
-          <select
-            v-model="clientFilter"
-            class="appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-4 pr-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+
+        <!-- Projects Grid -->
+        <div
+          v-else
+          class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
+          <RouterLink
+            v-for="project in filteredProjects"
+            :key="project.id"
+            :to="`/projects/${project.id}`"
+            class="block transition-transform hover:-translate-y-1"
           >
-            <option
-              v-for="client in clients"
-              :key="client"
-            >
-              {{ client }}
-            </option>
-          </select>
-          <IconFilter
-            class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-          />
+            <ProjectCard
+              :project="project"
+              @edit="handleEditProject"
+            />
+          </RouterLink>
         </div>
-      </div>
-    </div>
 
-    <!-- Loading State -->
-    <div
-      v-if="isLoading"
-      class="flex justify-center py-12"
-    >
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"
-      />
-    </div>
-
-    <!-- Projects Grid -->
-    <div
-      v-else
-      class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-    >
-      <RouterLink
-        v-for="project in filteredProjects"
-        :key="project.id"
-        :to="`/projects/${project.id}`"
-        class="block transition-transform hover:-translate-y-1"
-      >
-        <ProjectCard
-          :project="project"
-          @edit="handleEditProject"
-        />
-      </RouterLink>
-    </div>
-
-    <!-- Empty State -->
-    <div
-      v-if="filteredProjects.length === 0"
-      class="py-12 text-center"
-    >
-      <p class="text-gray-500">
-        No se encontraron proyectos que coincidan con los filtros.
-      </p>
-    </div>
+        <!-- Empty State -->
+        <div
+          v-if="filteredProjects.length === 0"
+          class="py-12 text-center"
+        >
+          <p class="text-gray-500">No se encontraron proyectos que coincidan con los filtros.</p>
+        </div>
+      </template>
+    </SectionLayout>
 
     <!-- Create Modal -->
     <ProjectCreateModal

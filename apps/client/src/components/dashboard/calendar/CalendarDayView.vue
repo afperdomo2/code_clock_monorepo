@@ -96,88 +96,47 @@ const formatDuration = (durationStr?: string) => {
         </p>
       </div>
 
-      <!-- Table View -->
-      <div
-        v-else
-        class="overflow-hidden border border-gray-200 rounded-lg"
-      >
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Hora
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Duración
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Proyecto
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Tipo
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-              >
-                Actividad
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="(event, index) in currentDayEvents"
-              :key="index"
-              class="transition-colors cursor-pointer hover:bg-gray-50"
-              @click="handleEventClick(event)"
-            >
-              <td
-                class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
-              >
+      <!-- Agenda View -->
+      <div v-else class="max-w-4xl mx-auto space-y-3 sm:space-y-4">
+        <button
+          v-for="(event, index) in currentDayEvents"
+          :key="index"
+          class="w-full p-4 text-left transition-shadow bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:shadow-md"
+          @click="handleEventClick(event)"
+        >
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div class="text-sm font-semibold text-gray-900 sm:text-base">
                 {{ formatTimeRange(event) }}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+              </div>
+              <div class="text-xs text-gray-500 sm:text-sm">
                 {{ formatDuration(event.duration) }}
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                <span
-                  :class="[
-                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
-                    getProjectColor(event.projectName),
-                  ]"
-                >
-                  {{ event.projectName || 'Sin proyecto' }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                <div class="flex items-center gap-1.5">
-                  <component
-                    :is="getActivityConfig(event.type).icon"
-                    class="w-4 h-4 text-gray-400"
-                  />
-                  <span>{{ event.type }}</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">
-                <div class="font-medium text-gray-900">
-                  {{ event.title }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+
+            <span
+              :class="[
+                'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border self-start',
+                getProjectColor(event.projectName),
+              ]"
+            >
+              {{ event.projectName || 'Sin proyecto' }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-[auto,1fr] sm:items-center sm:gap-3">
+            <div class="inline-flex items-center gap-2 text-xs font-medium text-gray-600 sm:text-sm">
+              <component
+                :is="getActivityConfig(event.type).icon"
+                class="w-4 h-4 text-gray-400"
+              />
+              <span>{{ event.type }}</span>
+            </div>
+            <div class="text-sm font-medium text-gray-900">
+              {{ event.title }}
+            </div>
+          </div>
+        </button>
       </div>
     </div>
 
