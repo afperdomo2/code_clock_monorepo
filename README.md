@@ -28,14 +28,22 @@ apps/
 - **ORM**: Prisma v7
 - **Lenguaje**: TypeScript
 - **Monorepo**: Nx
+- **Containerización**: Docker + Docker Compose
 
 ## 🚀 Inicio rapido
 
 ### Requisitos
 
+#### Desarrollo local (sin Docker)
+
 - Node.js 22+
 - pnpm
-- PostgreSQL (Puerto 5432)
+- PostgreSQL 16+ (Puerto 5432)
+
+#### Con Docker
+
+- Docker + Docker Compose
+- (PostgreSQL, Node.js, pnpm se instalan en los contenedores)
 
 ### Setup
 
@@ -65,6 +73,67 @@ pnpm nx serve client
 - API: <http://localhost:3000/api>
 - Swagger: <http://localhost:3000/api/docs>
 - Cliente: <http://localhost:5173>
+
+## 🐳 Deploy con Docker
+
+### Docker Compose (Múltiples configuraciones)
+
+El proyecto incluye varios archivos `docker-compose` para diferentes entornos:
+
+- **`docker-compose.local.yml`**: Desarrollo local (BD, API, Client todo en contenedores, expone PostgreSQL en puerto 5434)
+
+### docker-compose.local.yml (Desarrollo local)
+
+Levanta automáticamente la base de datos, API y Cliente en contenedores para desarrollo:
+
+```sh
+# Build de imágenes + Levantar servicios (una línea)
+docker compose -f docker-compose.local.yml up -d --build
+
+# O en dos pasos:
+
+# 1. Build de imágenes
+docker compose -f docker-compose.local.yml build
+
+# 2. Levantar servicios
+docker compose -f docker-compose.local.yml up -d
+```
+
+```sh
+# Ver logs
+docker compose -f docker-compose.local.yml logs -f api
+
+# Detener
+docker compose -f docker-compose.local.yml down
+
+# Reset completo (borrar volúmenes/BD)
+docker compose -f docker-compose.local.yml down -v
+```
+
+**Acceso (docker-compose.local.yml):**
+
+- Cliente: <http://localhost>
+- API: <http://localhost/api>
+- Swagger: <http://localhost/api/docs>
+- PostgreSQL: `localhost:5434` (usuario: `devuser`, contraseña: `devpassword123`)
+
+**Componentes:**
+
+- **api/Dockerfile**: Multi-stage build (Nx build → Node alpine)
+  - Auto-ejecuta migraciones Prisma al iniciar
+  - Genera cliente Prisma en runtime
+- **client/Dockerfile**: Multi-stage build (Nx build → Nginx alpine)
+- **client/nginx.conf**: Reverse proxy + SPA fallback
+
+### Configuración de Entorno
+
+Para variables opcionales (JWT_SECRET, puertos), copiar de [.env.example](.env.example):
+
+```bash
+JWT_SECRET=change-me-in-production
+API_PORT=3000
+CLIENT_PORT=80
+```
 
 ## 🧪 Comandos utiles
 
@@ -108,6 +177,17 @@ pnpm prisma migrate dev --config=apps/api/prisma.config.ts
 # Incorrecto
 pnpm prisma migrate dev --schema=apps/api/prisma/schema.prisma
 ```
+
+- **Docker build falla**: Limpiar cache y reconstruir desde cero:
+
+```sh
+docker compose -f docker-compose.local.yml down -v
+docker system prune -a
+docker compose -f docker-compose.local.yml build --no-cache
+docker compose -f docker-compose.local.yml up -d
+```
+
+- **API no accesible desde cliente**: Verificar que `VITE_API_URL=/api` en `.env` (usa reverse proxy de nginx)
 
 ## 🧠 Skills (Agentes)
 
