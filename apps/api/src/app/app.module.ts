@@ -10,6 +10,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { SetupModule } from './setup/setup.module';
 import { TimeEntriesModule } from './time-entries/time-entries.module';
 import { UsersModule } from './users/users.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     SetupModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,
