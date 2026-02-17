@@ -95,32 +95,31 @@ const handleEventClick = (event: ActivityEvent) => {
           :key="index"
           :class="[
             'relative flex min-h-20 sm:min-h-30 lg:min-h-35 flex-col items-start justify-start rounded-md sm:rounded-lg border p-1 sm:p-2 transition-colors',
-            day.isCurrentMonth
-              ? 'bg-white text-gray-900'
-              : 'bg-gray-50 text-gray-400',
+            day.isCurrentMonth ? 'bg-white text-gray-900' : 'bg-gray-50 text-gray-400',
             day.isToday ? 'ring-2 ring-indigo-600 ring-inset' : 'border-gray-100',
           ]"
         >
           <span
-            :class="[
-              'mb-1 text-[11px] sm:text-sm',
-              day.isToday ? 'font-bold text-indigo-600' : '',
-            ]"
+            :class="['mb-1 text-[11px] sm:text-sm', day.isToday ? 'font-bold text-indigo-600' : '']"
           >
             {{ day.date.date() }}
           </span>
 
-          <div class="flex flex-wrap w-full gap-1 sm:hidden">
+          <div class="flex flex-col w-full gap-1 sm:hidden">
             <button
               v-for="(event, eIdx) in getEventsForDay(day.date)"
-              :key="`dot-${eIdx}`"
+              :key="`mobile-${eIdx}`"
               :class="[
-                'w-1.5 h-1.5 rounded-full border cursor-pointer',
+                'flex w-full items-center gap-1 rounded text-[11px] sm:px-1.5 cursor-pointer border transition-colors hover:opacity-80',
                 getProjectColor(event.projectName),
               ]"
-              :title="`${event.projectName || 'Sin proyecto'} - ${event.title}`"
+              :title="`${event.projectName || 'Sin proyecto'} - ${event.type}`"
               @click.stop="handleEventClick(event)"
-            />
+            >
+              <span class="flex-1 overflow-hidden whitespace-nowrap">
+                {{ event.projectName || 'Sin proyecto' }}
+              </span>
+            </button>
           </div>
 
           <div class="hidden w-full space-y-1 sm:block">
@@ -141,9 +140,7 @@ const handleEventClick = (event: ActivityEvent) => {
                 />
                 {{ event.projectName || 'Sin proyecto' }}
               </div>
-              <div
-                class="flex items-center justify-between opacity-90 text-[10px]"
-              >
+              <div class="flex items-center justify-between opacity-90 text-[10px]">
                 <span class="truncate max-w-[60%]">{{ event.type }}</span>
                 <span>{{ event.duration?.replace(' horas', 'h') }}</span>
               </div>
