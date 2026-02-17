@@ -18,7 +18,7 @@ RUN pnpm nx build api
 # ── Stage 2: Production ────────────────────────────────────────
 FROM node:22-alpine
 
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init curl
 WORKDIR /app
 
 # Copiar build output (incluye package.json generado por webpack)
