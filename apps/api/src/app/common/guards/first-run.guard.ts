@@ -24,14 +24,14 @@ export class FirstRunGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const path = request?.url ?? '';
 
-    if (path.startsWith('/api/docs')) {
+    if (path.startsWith('/api/docs') || path.startsWith('/api/health')) {
       return true;
     }
 
-    const allowFirstRun = this.reflector.getAllAndOverride<boolean>(
-      ALLOW_FIRST_RUN_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const allowFirstRun = this.reflector.getAllAndOverride<boolean>(ALLOW_FIRST_RUN_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const hasUsers = await this.usersService.hasUsers();
 

@@ -1,4 +1,4 @@
-version: "3.9"
+name: code_clock_dokploy
 
 # Compose pensado para el deploy en Dokploy: configura la base de datos interna
 # y levanta la API junto con el cliente estático.
@@ -8,17 +8,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-dokploy}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dokploypassword}
-      POSTGRES_DB: ${POSTGRES_DB:-code_clock}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - dokploy_postgres:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-dokploy} -d ${POSTGRES_DB:-code_clock}",
-        ]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,13 +29,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: '1.0'
           memory: 256M
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
   api:
     build:
@@ -52,14 +48,10 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-dokploy}:${POSTGRES_PASSWORD:-dokploypassword}@db:5432/${POSTGRES_DB:-code_clock}?schema=public}
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1",
-        ]
+      test: ['CMD-SHELL', 'curl --fail --silent http://localhost:3000/api/health || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,13 +59,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: '1.0'
           memory: 384M
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
   client:
     build:
@@ -86,17 +78,17 @@ services:
       api:
         condition: service_healthy
     expose:
-      - "80"
+      - '80'
     deploy:
       resources:
         limits:
-          cpus: "0.25"
+          cpus: '0.25'
           memory: 128M
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
 
 volumes:
   dokploy_postgres:
