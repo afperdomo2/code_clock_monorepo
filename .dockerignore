@@ -9,8 +9,3 @@ coverage
 .env
 .env.local
 .env.*.local
-.vscode
-.playwright-mcp
-.agents
-*.log
-.DS_Store

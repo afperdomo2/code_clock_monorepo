@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.7
 # ── Stage 1: Build ──────────────────────────────────────────────
 FROM node:22-alpine AS builder
 
@@ -7,8 +6,7 @@ WORKDIR /app
 
 # Copiar archivos de dependencias primero (mejor cache de capas)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
-	pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Copiar el resto del código fuente
 COPY . .
@@ -30,3 +28,5 @@ COPY --from=builder /app/dist/apps/client /usr/share/nginx/html
 COPY apps/client/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
