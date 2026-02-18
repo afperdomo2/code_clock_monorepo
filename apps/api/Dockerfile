@@ -31,6 +31,7 @@ COPY --from=builder --chown=api:nodejs /app/dist/apps/api .
 
 # Copiar schema + migraciones de Prisma
 COPY --from=builder --chown=api:nodejs /app/apps/api/prisma ./prisma
+COPY --from=builder --chown=api:nodejs /app/apps/api/prisma.config.ts ./prisma.config.ts
 
 # Instalar dependencias de producción y CLI de Prisma en una sola capa
 RUN npm install --omit=dev prisma dotenv && npm cache clean --force
@@ -44,4 +45,4 @@ EXPOSE 3000
 USER api
 
 # Ejecutar migraciones y luego iniciar la aplicación
-CMD ["dumb-init", "sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma && node main.js"]
+CMD ["dumb-init", "sh", "-c", "./node_modules/.bin/prisma migrate deploy --config=./prisma.config.ts && node main.js"]
