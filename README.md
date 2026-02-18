@@ -29,6 +29,7 @@ apps/
 - **Lenguaje**: TypeScript
 - **Monorepo**: Nx
 - **Containerización**: Docker + Docker Compose
+- **Despliegue**: Dokploy
 
 ## 🚀 Inicio rapido
 
@@ -81,8 +82,9 @@ pnpm nx serve client
 El proyecto incluye varios archivos `docker-compose` para diferentes entornos:
 
 - **`docker-compose.local.yml`**: Desarrollo local (BD, API, Client todo en contenedores, expone PostgreSQL en puerto 5434)
+- **`docker-compose.dokploy.yml`**: Despliegue en Dokploy (BD interna, API y Client optimizados para producción)
 
-### docker-compose.local.yml (Desarrollo local)
+### 🐳 Producción local
 
 Levanta automáticamente la base de datos, API y Cliente en contenedores para desarrollo:
 
@@ -117,22 +119,50 @@ docker compose -f docker-compose.local.yml down -v
 - Swagger: <http://localhost/api/docs>
 - PostgreSQL: `localhost:5434` (usuario: `devuser`, contraseña: `devpassword123`)
 
-**Componentes:**
+### 🐳 Despliegue en Dokploy
 
-- **api/Dockerfile**: Multi-stage build (Nx build → Node alpine)
-  - Auto-ejecuta migraciones Prisma al iniciar
-  - Genera cliente Prisma en runtime
-- **client/Dockerfile**: Multi-stage build (Nx build → Nginx alpine)
-- **client/nginx.conf**: Reverse proxy + SPA fallback
+Configurado para despliegue en [Dokploy](https://dokploy.com/), una plataforma de despliegue con base de datos interna y servicios optimizados para producción:
+
+```sh
+# Build de imágenes + Levantar servicios
+docker compose -f docker-compose.dokploy.yml up -d --build
+
+# Ver logs
+docker compose -f docker-compose.dokploy.yml logs -f api
+
+# Detener
+docker compose -f docker-compose.dokploy.yml down
+
+# Reset completo (borrar volúmenes/BD)
+docker compose -f docker-compose.dokploy.yml down -v
+```
 
 ### Configuración de Entorno
 
-Para variables opcionales (JWT_SECRET, puertos), copiar de [.env.example](.env.example):
+#### Variables requeridas
+
+Copiar de [.env.example](.env.example) y configurar según el entorno:
+
+**Para `docker-compose.local.yml`:**
 
 ```bash
-JWT_SECRET=change-me-in-production
-API_PORT=3000
-CLIENT_PORT=80
+# API
+JWT_SECRET=your-jwt-secret-here
+
+API_PORT=3000 # Opcional
+CLIENT_PORT=4200 # Opcional
+```
+
+**Para `docker-compose.dokploy.yml`:**
+
+```bash
+# Base de datos (configurada internamente)
+POSTGRES_USER=your-db-user
+POSTGRES_PASSWORD=your-db-password
+POSTGRES_DB=codeclock_prod
+
+# API
+JWT_SECRET=your-production-jwt-secret
 ```
 
 ## 🧪 Comandos utiles
@@ -188,6 +218,17 @@ docker compose -f docker-compose.local.yml up -d
 ```
 
 - **API no accesible desde cliente**: Verificar que `VITE_API_URL=/api` en `.env` (usa reverse proxy de nginx)
+
+- **Despliegue en Dokploy falla ("not found" en frontend)**:
+  - Verificar que el cliente tenga `ports: - "80:80"` en `docker-compose.dokploy.yml`
+  - Asegurar que el cliente no dependa de la API para iniciarse (remover `depends_on` si es necesario)
+  - Revisar logs del contenedor cliente: `docker logs <container-name>`
+  - Verificar que nginx esté sirviendo archivos desde `/usr/share/nginx/html`
+
+- **API no saludable en Dokploy**:
+  - Verificar que las migraciones Prisma se ejecuten correctamente en el entrypoint
+  - Revisar logs de la API: `docker compose -f docker-compose.dokploy.yml logs api`
+  - Asegurar que `DATABASE_URL` apunte correctamente al servicio `db`
 
 ## 🧠 Skills (Agentes)
 
