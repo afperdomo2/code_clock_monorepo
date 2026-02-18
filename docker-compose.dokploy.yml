@@ -36,6 +36,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - code_clock_network
 
   api:
     build:
@@ -70,6 +72,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - code_clock_network
 
   client:
     build:
@@ -93,6 +97,12 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - code_clock_network
 
 volumes:
   dokploy_postgres:
+
+networks:
+  code_clock_network:
+    driver: bridge
